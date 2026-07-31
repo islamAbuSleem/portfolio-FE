@@ -210,6 +210,16 @@
   transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
 }
 
+@utility section-py {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+}
+
+@utility section-px {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
 @keyframes glow-pulse {
   0%, 100% { box-shadow: 0 0 15px var(--primary-glow); }
   50% { box-shadow: 0 0 30px var(--primary-glow); }
@@ -222,6 +232,12 @@
 
 @utility animate-glow {
   animation: glow-pulse 3s ease-in-out infinite;
+}
+
+@utility line-clamp {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
 }
 
 @media (prefers-reduced-motion: reduce) {
