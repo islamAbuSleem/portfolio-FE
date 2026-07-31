@@ -15,6 +15,7 @@
   --color-secondary-dim: var(--secondary-dim);
   --color-error: #ef4444;
   --color-success: #22c55e;
+  --color-warning: #f59e0b;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -28,8 +29,10 @@
   --text-secondary: #64748b;
   --primary: #06d6a0;
   --primary-dim: #04b889;
+  --primary-glow: rgba(6, 214, 160, 0.25);
   --secondary: #7c3aed;
   --secondary-dim: #6d28d9;
+  --secondary-glow: rgba(124, 58, 237, 0.25);
 }
 
 .dark {
@@ -41,8 +44,10 @@
   --text-secondary: #6b6b80;
   --primary: #06d6a0;
   --primary-dim: #04b889;
+  --primary-glow: rgba(6, 214, 160, 0.15);
   --secondary: #7c3aed;
   --secondary-dim: #6d28d9;
+  --secondary-glow: rgba(124, 58, 237, 0.15);
 }
 
 @layer base {
@@ -86,4 +91,14 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes zoomIn95 {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
