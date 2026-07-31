@@ -94,7 +94,7 @@ export function ContactSection() {
 
       <div className="relative z-10 max-w-6xl mx-auto">
         <ScrollReveal>
-          <h2 className="text-headline-lg font-semibold text-text mb-4 text-center">
+          <h2 className="text-headline-md md:text-headline-lg font-semibold text-text mb-4 text-center">
             Get in Touch
           </h2>
           <p className="text-body-md text-text-secondary text-center max-w-2xl mx-auto mb-16">

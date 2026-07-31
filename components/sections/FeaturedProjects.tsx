@@ -14,7 +14,7 @@ export function FeaturedProjects() {
         <ScrollReveal>
           <div className="flex items-center justify-between mb-12">
             <div>
-              <h2 className="text-headline-lg font-semibold text-text mb-2">
+              <h2 className="text-headline-md md:text-headline-lg font-semibold text-text mb-2">
                 Featured Projects
               </h2>
               <p className="text-body-md text-text-secondary">

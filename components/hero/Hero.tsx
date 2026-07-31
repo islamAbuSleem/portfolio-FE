@@ -42,7 +42,7 @@ export function Hero() {
         className="relative z-10 text-center px-6 max-w-4xl mx-auto will-change-transform"
       >
         <div className="relative inline-block mb-8">
-          <h1 className="text-display-xl font-extrabold text-text leading-tight tracking-tight">
+          <h1 className="text-display-lg-mobile md:text-display-xl font-extrabold text-text leading-tight tracking-tight">
             I build{" "}
             <span className="text-gradient-primary">diverse</span>{" "}
             <span className="text-gradient-secondary">systems</span>
