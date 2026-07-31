@@ -1,6 +1,8 @@
 import { Hero } from "@/components/hero/Hero";
 import { AboutSection } from "@/components/sections/AboutSection";
 import { SkillsSection } from "@/components/sections/SkillsSection";
+import { ExperienceSection } from "@/components/sections/ExperienceSection";
+import { FeaturedProjects } from "@/components/sections/FeaturedProjects";
 
 export default function Home() {
   return (
@@ -17,6 +19,8 @@ export default function Home() {
         tags={["Expertly Crafted", "Solution Driven", "Performance First"]}
       />
       <SkillsSection />
+      <ExperienceSection />
+      <FeaturedProjects />
     </main>
   );
 }
