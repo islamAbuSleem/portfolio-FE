@@ -3,6 +3,7 @@
 import { ReactNode } from "react";
 import { TagPill } from "@/components/ui/TagPill";
 import Link from "next/link";
+import { useScrollBlur } from "@/hooks/useScrollBlur";
 
 export function AboutSection({
   title,
@@ -15,8 +16,17 @@ export function AboutSection({
   avatar?: ReactNode;
   tags?: string[];
 }) {
+  const isBlurred = useScrollBlur(80);
+
   return (
-    <section className="relative py-24 px-6">
+    <section
+      className={`relative px-6 transition-all duration-500 -mt-20 z-10 ${
+        isBlurred
+          ? "backdrop-blur-xl bg-surface/70 border-y border-border/40"
+          : ""
+      }`}
+      style={{ paddingTop: "8rem", paddingBottom: "6rem" }}
+    >
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row gap-12 items-center">
           <div className="relative flex-shrink-0">
