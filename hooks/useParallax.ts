@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore, useEffect, useState } from "react";
+import { useSyncExternalStore, useEffect, useRef } from "react";
 
 function subscribeToPrefersReducedMotion(callback: () => void) {
   const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -26,14 +26,18 @@ function usePrefersReducedMotion() {
 
 export function useParallax(speed: number) {
   const prefersReducedMotion = usePrefersReducedMotion();
-  const [offset, setOffset] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (prefersReducedMotion) return;
+    const el = ref.current;
+    if (!el) return;
+
     let raf: number;
     const handleScroll = () => {
       raf = requestAnimationFrame(() => {
-        setOffset(window.scrollY * (1 - speed));
+        const y = window.scrollY * (1 - speed);
+        el.style.transform = `translate3d(0, ${y}px, 0)`;
       });
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -43,5 +47,5 @@ export function useParallax(speed: number) {
     };
   }, [speed, prefersReducedMotion]);
 
-  return prefersReducedMotion ? 0 : offset;
+  return ref;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import { ChevronDown } from "lucide-react";
 import { useParallax } from "@/hooks/useParallax";
@@ -10,9 +10,9 @@ const PHRASES = ["diverse systems", "innovative interfaces", "meaningful experie
 export function Hero() {
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [visible, setVisible] = useState(true);
-  const bgOffset = useParallax(0.1);
-  const contentOffset = useParallax(0.25);
-  const fgOffset = useParallax(0.4);
+  const bgRef = useParallax(0.1);
+  const contentRef = useParallax(0.25);
+  const fgRef = useParallax(0.4);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -28,8 +28,8 @@ export function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div
-        className="absolute inset-0 bg-gradient-to-br from-bg via-surface to-bg"
-        style={{ transform: `translateY(${bgOffset}px)` }}
+        ref={bgRef}
+        className="absolute inset-0 bg-gradient-to-br from-bg via-surface to-bg will-change-transform"
         aria-hidden="true"
       />
       <div
@@ -38,8 +38,8 @@ export function Hero() {
       />
 
       <div
-        className="relative z-10 text-center px-6 max-w-4xl mx-auto"
-        style={{ transform: `translateY(${contentOffset}px)` }}
+        ref={contentRef}
+        className="relative z-10 text-center px-6 max-w-4xl mx-auto will-change-transform"
       >
         <div className="relative inline-block mb-8">
           <h1 className="text-display-xl font-extrabold text-text leading-tight tracking-tight">
@@ -80,8 +80,9 @@ export function Hero() {
       </div>
 
       <div
-        className="absolute bottom-8 left-1/2 flex flex-col items-center gap-2"
-        style={{ transform: `translateX(-50%) translateY(${fgOffset}px)` }}
+        ref={fgRef}
+        className="absolute bottom-8 left-1/2 flex flex-col items-center gap-2 will-change-transform"
+        style={{ transform: "translateX(-50%)" }}
       >
         <span className="text-label-md text-text-secondary tracking-widest">SCROLL</span>
         <ChevronDown className="w-5 h-5 text-text-secondary animate-bounce" />
