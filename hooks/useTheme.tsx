@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { useSyncExternalStore, createContext, useContext, useState, ReactNode } from "react";
 
 type Theme = "light" | "dark";
 
@@ -13,18 +13,30 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("light");
-  const [mounted, setMounted] = useState(false);
+function subscribeToMounted() {
+  return () => {};
+}
 
-  useEffect(() => {
-    setMounted(true);
+function getClientSnapshot() {
+  return true;
+}
+
+function getServerSnapshot() {
+  return false;
+}
+
+function useIsMounted() {
+  return useSyncExternalStore(subscribeToMounted, getClientSnapshot, getServerSnapshot);
+}
+
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  const mounted = useIsMounted();
+  const [theme, setThemeState] = useState<Theme>(() => {
+    if (typeof window === "undefined") return "light";
     const stored = localStorage.getItem("theme") as Theme | null;
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const initial = stored ?? (prefersDark ? "dark" : "light");
-    setThemeState(initial);
-    document.documentElement.classList.toggle("dark", initial === "dark");
-  }, []);
+    return stored ?? (prefersDark ? "dark" : "light");
+  });
 
   const toggleTheme = () => {
     const next = theme === "light" ? "dark" : "light";
