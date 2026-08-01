@@ -13,7 +13,7 @@ export default function ProjectsPage({ searchParams }: { searchParams: { skill?:
   const uniqueSkills = Array.from(new Set(projects.flatMap((p) => p.tech))).sort();
 
   return (
-    <main className="min-h-screen py-24 px-6">
+    <div className="py-24 px-6">
       <div className="max-w-6xl mx-auto">
         <div className="mb-12">
           <h1 className="text-headline-lg font-semibold text-text mb-2">
@@ -112,6 +112,6 @@ export default function ProjectsPage({ searchParams }: { searchParams: { skill?:
           </div>
         )}
       </div>
-    </main>
+    </div>
   );
 }
