@@ -1,26 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
+import { GithubIcon, LinkedinIcon } from "@/components/icons/SocialIcons";
+import { isValidEmail } from "@/lib/validation";
 import { Mail, MapPin } from "lucide-react";
-
-function GithubIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-    </svg>
-  );
-}
-
-function LinkedinIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-    </svg>
-  );
-}
 
 function CheckIcon() {
   return (
@@ -39,14 +26,21 @@ export function ContactSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errors, setErrors] = useState<{ name?: string; email?: string; message?: string }>({});
-  const [sparkles, setSparkles] = useState<{ id: number; x: number; y: number }[]>([]);
+  const [sparkles, setSparkles] = useState<{ id: number; x: number; y: number; tx: number; ty: number }[]>([]);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const sparkleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (sparkleTimerRef.current) clearTimeout(sparkleTimerRef.current);
+    };
+  }, []);
 
   const validate = () => {
     const newErrors: { name?: string; email?: string; message?: string } = {};
     if (!formState.name.trim()) newErrors.name = "Name is required";
     if (!formState.email.trim()) newErrors.email = "Email is required";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formState.email)) newErrors.email = "Invalid email";
+    else if (!isValidEmail(formState.email)) newErrors.email = "Invalid email";
     if (!formState.message.trim()) newErrors.message = "Message is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -61,13 +55,19 @@ export function ContactSection() {
 
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      const newSparkles = Array.from({ length: 12 }).map((_, i) => ({
+    const newSparkles = Array.from({ length: 12 }).map((_, i) => {
+      const angle = (i / 12) * Math.PI * 2;
+      const distance = 30 + Math.random() * 20;
+      return {
         id: i,
-        x: rect.left + rect.width / 2 + (Math.random() - 0.5) * 100,
-        y: rect.top + rect.height / 2 + (Math.random() - 0.5) * 40,
-      }));
-      setSparkles(newSparkles);
-      setTimeout(() => setSparkles([]), 800);
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+        tx: Math.cos(angle) * distance,
+        ty: Math.sin(angle) * distance,
+      };
+    });
+    setSparkles(newSparkles);
+    sparkleTimerRef.current = setTimeout(() => setSparkles([]), 800);
     }
 
     setIsSubmitting(false);
@@ -97,9 +97,9 @@ export function ContactSection() {
           <h2 className="text-headline-md md:text-headline-lg font-semibold text-text mb-4 text-center">
             Get in Touch
           </h2>
-          <p className="text-body-md text-text-secondary text-center max-w-2xl mx-auto mb-16">
-            Have a project in mind or want to discuss an opportunity? I&apos;d love to hear from you.
-          </p>
+        <p className="text-body-md text-text-secondary mb-16">
+          Have a project in mind or want to discuss an opportunity? I&apos;d love to hear from you.
+        </p>
         </ScrollReveal>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -134,18 +134,13 @@ export function ContactSection() {
                   error={errors.email}
                   placeholder="you@example.com"
                 />
-                <div className="w-full">
-                  <label className="block text-label-md text-text-secondary mb-1.5">Message</label>
-                  <textarea
-                    value={formState.message}
-                    onChange={(e) => setFormState({ ...formState, message: e.target.value })}
-                    rows={5}
-                    className={`w-full bg-surface-container-lowest border-0 border-b-2 border-border text-text placeholder:text-text-secondary/50 focus:border-primary focus:outline-none focus:ring-0 transition-colors py-3 px-0 rounded-t-lg resize-none ${errors.message ? "border-error" : ""}`}
-                  />
-                  {errors.message && (
-                    <p className="mt-1.5 text-sm text-error" role="alert">{errors.message}</p>
-                  )}
-                </div>
+                <Textarea
+                  label="Message"
+                  value={formState.message}
+                  onChange={(e) => setFormState({ ...formState, message: e.target.value })}
+                  rows={5}
+                  error={errors.message}
+                />
 
                 <div className="relative">
                   <Button
@@ -159,25 +154,19 @@ export function ContactSection() {
                     Send Message
                   </Button>
 
-                  {sparkles.map((s) => {
-                    const angle = (s.id / 12) * Math.PI * 2;
-                    const distance = 30 + Math.random() * 20;
-                    const tx = Math.cos(angle) * distance;
-                    const ty = Math.sin(angle) * distance;
-                    return (
-                      <span
-                        key={s.id}
-                        className="fixed w-1.5 h-1.5 rounded-full bg-primary pointer-events-none z-50"
-                        style={{
-                          left: s.x,
-                          top: s.y,
-                          "--tx": `${tx}px`,
-                          "--ty": `${ty}px`,
-                          animation: "sparkle 0.6s ease-out forwards",
-                        } as React.CSSProperties}
-                      />
-                    );
-                  })}
+                  {sparkles.map((s) => (
+                    <span
+                      key={s.id}
+                      className="fixed w-1.5 h-1.5 rounded-full bg-primary pointer-events-none z-50"
+                      style={{
+                        left: s.x,
+                        top: s.y,
+                        "--tx": `${s.tx}px`,
+                        "--ty": `${s.ty}px`,
+                        animation: "sparkle 0.6s ease-out forwards",
+                      } as React.CSSProperties}
+                    />
+                  ))}
                 </div>
               </form>
             )}

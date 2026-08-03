@@ -1,10 +1,11 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode, useCallback } from "react";
+import { createContext, useContext, useState, ReactNode, useCallback, useRef, useEffect } from "react";
+import { CloseIcon } from "@/components/icons/SocialIcons";
 
 type ToastType = "success" | "error" | "info" | "warning";
 
-interface Toast {
+interface ToastItem {
   id: string;
   type: ToastType;
   title: string;
@@ -13,12 +14,19 @@ interface Toast {
 }
 
 interface ToastContextType {
-  toasts: Toast[];
-  addToast: (toast: Omit<Toast, "id">) => string;
+  toasts: ToastItem[];
+  addToast: (toast: Omit<ToastItem, "id">) => string;
   removeToast: (id: string) => void;
 }
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
+
+function genId(): string {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
+  }
+  return `toast-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
 
 const toastIcons: Record<ToastType, React.ReactNode> = {
   success: (
@@ -57,24 +65,43 @@ const toastColors: Record<ToastType, string> = {
   warning: "border-warning/30 bg-warning/10 text-warning",
 };
 
-export function ToastProvider({ children }: { children: ReactNode }) {
-  const [toasts, setToasts] = useState<Toast[]>([]);
+const DEFAULT_DURATION = 4000;
 
-  const addToast = useCallback((toast: Omit<Toast, "id">) => {
-    const id = Math.random().toString(36).slice(2, 9);
-    const newToast = { ...toast, id };
+export function ToastProvider({ children }: { children: ReactNode }) {
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+
+  const removeToast = useCallback((id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+    const timer = timers.current.get(id);
+    if (timer) {
+      clearTimeout(timer);
+      timers.current.delete(id);
+    }
+  }, []);
+
+  const addToast = useCallback((toast: Omit<ToastItem, "id">) => {
+    const id = genId();
+    const newToast: ToastItem = { ...toast, id };
     setToasts((prev) => [...prev, newToast]);
 
     if (toast.duration !== 0) {
-      setTimeout(() => {
+      const duration = toast.duration ?? DEFAULT_DURATION;
+      const timer = setTimeout(() => {
         setToasts((prev) => prev.filter((t) => t.id !== id));
-      }, toast.duration ?? 4000);
+        timers.current.delete(id);
+      }, duration);
+      timers.current.set(id, timer);
     }
     return id;
   }, []);
 
-  const removeToast = useCallback((id: string) => {
-    setToasts((prev) => prev.filter((t) => t.id !== id));
+  useEffect(() => {
+    const pendingTimers = timers.current;
+    return () => {
+      pendingTimers.forEach((t) => clearTimeout(t));
+      pendingTimers.clear();
+    };
   }, []);
 
   return (
@@ -85,7 +112,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   );
 }
 
-function ToastViewport({ toasts, onRemove }: { toasts: Toast[]; onRemove: (id: string) => void }) {
+function ToastViewport({ toasts, onRemove }: { toasts: ToastItem[]; onRemove: (id: string) => void }) {
   if (toasts.length === 0) return null;
 
   return (
@@ -106,10 +133,7 @@ function ToastViewport({ toasts, onRemove }: { toasts: Toast[]; onRemove: (id: s
             className="flex-shrink-0 text-text-secondary/70 hover:text-text transition-colors"
             aria-label="Dismiss"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <CloseIcon width={18} height={18} />
           </button>
         </div>
       ))}

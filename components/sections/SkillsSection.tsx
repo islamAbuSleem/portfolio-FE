@@ -1,6 +1,5 @@
 "use client";
 
-import { useInView } from "@/hooks/useInView";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import Link from "next/link";
 
@@ -36,9 +35,9 @@ export function SkillsSection() {
           <h2 className="text-headline-md md:text-headline-lg font-semibold text-text mb-4 text-center">
             Skills &amp; Expertise
           </h2>
-          <p className="text-body-md text-text-secondary text-center max-w-2xl mx-auto mb-12">
-            Technologies and practices I use to build reliable, scalable systems.
-          </p>
+        <p className="text-body-md text-text-secondary mb-12">
+          Technologies and practices I use to build reliable, scalable systems.
+        </p>
         </ScrollReveal>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -33,17 +33,19 @@ export function useParallax(speed: number) {
     const el = ref.current;
     if (!el) return;
 
-    let raf: number;
+    const baseTransform = el.style.transform || "";
+    let raf = 0;
     const handleScroll = () => {
+      if (raf) cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
         const y = window.scrollY * (1 - speed);
-        el.style.transform = `translate3d(0, ${y}px, 0)`;
+        el.style.transform = `${baseTransform} translate3d(0, ${y}px, 0)`;
       });
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      cancelAnimationFrame(raf);
+      if (raf) cancelAnimationFrame(raf);
     };
   }, [speed, prefersReducedMotion]);
 

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ClientThemeProvider } from "@/hooks/useThemeProvider";
+import { ThemeProvider } from "@/hooks/useTheme";
 import { ToastProvider } from "@/components/ui/Toast";
 
 const geistSans = Geist({
@@ -19,6 +19,20 @@ export const metadata: Metadata = {
   description: "Senior Full-Stack Engineer specializing in high-performance distributed systems and immersive frontend architectures.",
 };
 
+// Runs before React hydrates to prevent flash-of-wrong-theme. Duplicates the
+// logic in ThemeProvider, which is required because the provider's useState
+// initializer runs only on the client.
+const themeInitScript = `(function() {
+  try {
+    var stored = localStorage.getItem("theme");
+    var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var theme = stored || (prefersDark ? "dark" : "light");
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    }
+  } catch (e) {}
+})();`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,29 +41,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var stored = localStorage.getItem("theme");
-                  var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-                  var theme = stored || (prefersDark ? "dark" : "light");
-                  if (theme === "dark") {
-                    document.documentElement.classList.add("dark");
-                  }
-                } catch (e) {}
-              })();
-            `,
-          }}
-        />
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="min-h-full flex flex-col bg-bg text-text">
-        <ClientThemeProvider>
+        <ThemeProvider>
           <ToastProvider>
             {children}
           </ToastProvider>
-        </ClientThemeProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

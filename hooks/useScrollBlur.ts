@@ -6,9 +6,9 @@ export function useScrollBlur(threshold: number = 0) {
   const [isBlurred, setIsBlurred] = useState(false);
 
   useEffect(() => {
-    let raf: number;
+    let raf: number | null = null;
     const handleScroll = () => {
-      if (raf) cancelAnimationFrame(raf);
+      if (raf !== null) cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
         setIsBlurred(window.scrollY > threshold);
       });
@@ -17,7 +17,7 @@ export function useScrollBlur(threshold: number = 0) {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      if (raf) cancelAnimationFrame(raf);
+      if (raf !== null) cancelAnimationFrame(raf);
     };
   }, [threshold]);
 
