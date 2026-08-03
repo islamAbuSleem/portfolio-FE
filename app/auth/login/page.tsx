@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Mail, Lock } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -99,8 +99,8 @@ export default function LoginPage() {
 
       <p className="text-center text-sm text-text-secondary">
         No account?{" "}
-        <Link href="/auth/register" className="text-primary hover:underline font-medium">
-          Register
+        <Link href="/auth/forgot-password" className="text-primary hover:underline font-medium">
+          Forgot password?
         </Link>
       </p>
     </form>

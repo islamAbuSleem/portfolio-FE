@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import { ChevronDown } from "lucide-react";
 import { useParallax } from "@/hooks/useParallax";
@@ -15,14 +15,18 @@ export function Hero() {
   const fgRef = useParallax(0.4);
 
   useEffect(() => {
+    let innerTimeout: ReturnType<typeof setTimeout>;
     const interval = setInterval(() => {
       setVisible(false);
-      setTimeout(() => {
+      innerTimeout = setTimeout(() => {
         setPhraseIndex((i) => (i + 1) % PHRASES.length);
         setVisible(true);
       }, 500);
     }, 3000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(innerTimeout);
+    };
   }, []);
 
   return (

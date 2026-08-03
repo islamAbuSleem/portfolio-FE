@@ -30,9 +30,9 @@ export function ExperienceSection() {
           <h2 className="text-headline-md md:text-headline-lg font-semibold text-text mb-4 text-center">
             Experience
           </h2>
-          <p className="text-body-md text-text-secondary text-center max-w-2xl mx-auto mb-16">
-            A timeline of roles where I shipped work and grew as an engineer.
-          </p>
+        <p className="text-body-md text-text-secondary mb-16">
+          A timeline of roles where I shipped work and grew as an engineer.
+        </p>
         </ScrollReveal>
 
         <div className="relative">
