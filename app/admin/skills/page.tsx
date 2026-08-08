@@ -169,7 +169,7 @@ export default function AdminSkillsPage() {
                         <button
                           type="button"
                           onClick={() => handleMove(skill, flatIndex - 1)}
-                          disabled={flatIndex <= 0}
+                          disabled={flatIndex <= 0 || isMutating}
                           className="p-1 rounded hover:bg-surface-elevated text-text-secondary hover:text-primary transition-colors disabled:opacity-30 disabled:pointer-events-none"
                           aria-label={`Move ${skill.name} up`}
                         >
@@ -178,7 +178,7 @@ export default function AdminSkillsPage() {
                         <button
                           type="button"
                           onClick={() => handleMove(skill, flatIndex + 1)}
-                          disabled={flatIndex >= skills.length - 1}
+                          disabled={flatIndex >= skills.length - 1 || isMutating}
                           className="p-1 rounded hover:bg-surface-elevated text-text-secondary hover:text-primary transition-colors disabled:opacity-30 disabled:pointer-events-none"
                           aria-label={`Move ${skill.name} down`}
                         >
