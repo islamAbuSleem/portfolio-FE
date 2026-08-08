@@ -2,7 +2,8 @@
 
 import { useInView } from "@/hooks/useInView";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
-import { experiences } from "@/data/experiences";
+import { Experience } from "@/lib/api";
+import { formatPeriod } from "@/lib/utils";
 
 function TimelineDot({ inView }: { inView: boolean }) {
   return (
@@ -22,7 +23,7 @@ function TimelineDot({ inView }: { inView: boolean }) {
   );
 }
 
-export function ExperienceSection() {
+export function ExperienceSection({ experiences }: { experiences: Experience[] }) {
   return (
     <section className="relative py-24 px-6">
       <div className="max-w-6xl mx-auto">
@@ -30,26 +31,34 @@ export function ExperienceSection() {
           <h2 className="text-headline-md md:text-headline-lg font-semibold text-text mb-4 text-center">
             Experience
           </h2>
-        <p className="text-body-md text-text-secondary mb-16">
-          A timeline of roles where I shipped work and grew as an engineer.
-        </p>
+          <p className="text-body-md text-text-secondary mb-16">
+            A timeline of roles where I shipped work and grew as an engineer.
+          </p>
         </ScrollReveal>
 
-        <div className="relative">
-          <div
-            className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary via-primary/50 to-secondary"
-            aria-hidden="true"
-          />
-
-          <div className="flex flex-col gap-12">
-            {experiences.map((exp, index) => {
-              const isEven = index % 2 === 0;
-              return (
-                <ExperienceItem key={exp.id} experience={exp} isEven={isEven} />
-              );
-            })}
+        {experiences.length === 0 ? (
+          <div className="glass rounded-2xl p-10 text-center">
+            <p className="text-body-md text-text-secondary">
+              Work history is being updated — check back soon.
+            </p>
           </div>
-        </div>
+        ) : (
+          <div className="relative">
+            <div
+              className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary via-primary/50 to-secondary"
+              aria-hidden="true"
+            />
+
+            <div className="flex flex-col gap-12">
+              {experiences.map((exp, index) => {
+                const isEven = index % 2 === 0;
+                return (
+                  <ExperienceItem key={exp.id} experience={exp} isEven={isEven} />
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
@@ -59,7 +68,7 @@ function ExperienceItem({
   experience,
   isEven,
 }: {
-  experience: typeof experiences[0];
+  experience: Experience;
   isEven: boolean;
 }) {
   const { ref, inView } = useInView({ threshold: 0.2 });
@@ -89,7 +98,7 @@ function ExperienceItem({
           <div className="flex flex-col gap-1">
             <h3 className="text-headline-sm font-semibold text-text">
               {experience.role}
-              {experience.current && (
+              {!experience.endDate && (
                 <span
                   className="inline-block ml-2 px-2 py-0.5 rounded-full bg-primary text-on-primary text-label-sm font-medium"
                   style={{ animation: "now-badge-pulse 2s ease-in-out infinite" }}
@@ -99,7 +108,9 @@ function ExperienceItem({
               )}
             </h3>
             <p className="text-primary font-medium">{experience.company}</p>
-            <p className="text-label-md text-text-secondary mb-3">{experience.period}</p>
+            <p className="text-label-md text-text-secondary mb-3">
+              {formatPeriod(experience.startDate, experience.endDate)}
+            </p>
             <p className="text-body-sm text-text-secondary">{experience.description}</p>
           </div>
         </div>

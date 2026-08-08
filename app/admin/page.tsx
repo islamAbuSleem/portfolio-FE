@@ -2,20 +2,38 @@ import { GlassCard } from "@/components/ui/GlassCard";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { FolderOpen, Wrench, Briefcase, Plus } from "lucide-react";
+import { getExperience, getProjects, getSkills } from "@/lib/api";
 
-const stats = [
-  { label: "Total Projects", value: "6", icon: FolderOpen, color: "text-primary" },
-  { label: "Skills", value: "20", icon: Wrench, color: "text-secondary" },
-  { label: "Experience", value: "3", icon: Briefcase, color: "text-primary" },
-];
+export const dynamic = "force-dynamic";
 
-const recentProjects = [
-  { id: "1", title: "Distributed Cache System", updated: "2 days ago" },
-  { id: "2", title: "Realtime Analytics Dashboard", updated: "1 week ago" },
-  { id: "3", title: "API Gateway & Rate Limiter", updated: "2 weeks ago" },
-];
+function timeAgo(iso: string): string {
+  const diffMs = Date.now() - new Date(iso).getTime();
+  const minutes = Math.floor(diffMs / 60000);
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes} minute${minutes !== 1 ? "s" : ""} ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} hour${hours !== 1 ? "s" : ""} ago`;
+  const days = Math.floor(hours / 24);
+  return `${days} day${days !== 1 ? "s" : ""} ago`;
+}
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
+  const [projects, skills, experience] = await Promise.all([
+    getProjects().catch(() => []),
+    getSkills().catch(() => []),
+    getExperience().catch(() => []),
+  ]);
+
+  const stats = [
+    { label: "Total Projects", value: projects.length.toString(), icon: FolderOpen, color: "text-primary" },
+    { label: "Skills", value: skills.length.toString(), icon: Wrench, color: "text-secondary" },
+    { label: "Experience", value: experience.length.toString(), icon: Briefcase, color: "text-primary" },
+  ];
+
+  const recentProjects = [...projects]
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+    .slice(0, 3);
+
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-8">
@@ -45,19 +63,25 @@ export default function AdminDashboard() {
             </Button>
           </Link>
         </div>
-        <div className="space-y-4">
-          {recentProjects.map((project) => (
-            <div key={project.id} className="flex items-center justify-between py-3 border-b border-border/50 last:border-0">
-              <div>
-                <p className="text-body-sm font-medium text-text">{project.title}</p>
-                <p className="text-label-sm text-text-secondary">Updated {project.updated}</p>
+        {recentProjects.length === 0 ? (
+          <p className="text-body-md text-text-secondary py-4">
+            No projects yet — add your first one.
+          </p>
+        ) : (
+          <div className="space-y-4">
+            {recentProjects.map((project) => (
+              <div key={project.id} className="flex items-center justify-between py-3 border-b border-border/50 last:border-0">
+                <div>
+                  <p className="text-body-sm font-medium text-text">{project.title}</p>
+                  <p className="text-label-sm text-text-secondary">Updated {timeAgo(project.updatedAt)}</p>
+                </div>
+                <Link href="/admin/projects" className="text-primary hover:text-primary-dim text-sm font-medium">
+                  Edit
+                </Link>
               </div>
-              <Link href="/admin/projects" className="text-primary hover:text-primary-dim text-sm font-medium">
-                Edit
-              </Link>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </GlassCard>
     </div>
   );

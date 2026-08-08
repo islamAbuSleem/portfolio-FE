@@ -9,10 +9,25 @@ import { Modal } from "@/components/ui/Modal";
 import { Textarea } from "@/components/ui/Textarea";
 import { ConfirmationDialog } from "@/components/ui/ConfirmationDialog";
 import { useToast } from "@/components/ui/Toast";
-import { useCrudResource } from "@/hooks/useCrudResource";
+import { useCrudResource, RemoteCrud } from "@/hooks/useCrudResource";
 import { Validators, parseCommaSeparated } from "@/lib/validation";
-import { Plus, Edit2, Trash2, Star } from "lucide-react";
-import { Project } from "@/lib/api";
+import { Plus, Edit2, Trash2, Star, ChevronUp, ChevronDown } from "lucide-react";
+import {
+  Project,
+  createProject,
+  deleteProject,
+  getProjects,
+  reorderProjects,
+  updateProject,
+} from "@/lib/api";
+
+const projectsRemote: RemoteCrud<Project> = {
+  list: () => getProjects(),
+  create: (data) => createProject(data),
+  update: (id, data) => updateProject(id, data),
+  remove: (id) => deleteProject(id),
+  reorder: (items) => reorderProjects(items),
+};
 
 const EMPTY_FORM = {
   title: "",
@@ -36,7 +51,8 @@ export default function AdminProjectsPage() {
     createItem,
     updateItem,
     deleteItem,
-  } = useCrudResource<Project>(MOCK_PROJECTS);
+    moveItem,
+  } = useCrudResource<Project>([], { remote: projectsRemote });
 
   const [formData, setFormData] = useState<FormData>({ ...EMPTY_FORM });
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof FormData, string>>>({});
@@ -89,6 +105,15 @@ export default function AdminProjectsPage() {
     }
 
     return errors;
+  };
+
+  const handleMove = (project: Project, targetIndex: number) => {
+    const fromIndex = projects.findIndex((p) => p.id === project.id);
+    if (fromIndex < 0) return;
+    moveItem(fromIndex, targetIndex, {
+      onSuccess: () => addToast({ type: "success", title: "Order updated" }),
+      onError: (err) => addToast({ type: "error", title: "Reorder failed", message: err.message }),
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -194,7 +219,25 @@ export default function AdminProjectsPage() {
                     )}
                   </td>
                   <td className="py-4 px-4">
-                    <div className="flex items-center justify-end gap-2">
+                    <div className="flex items-center justify-end gap-1">
+                      <button
+                        type="button"
+                        onClick={() => handleMove(project, projects.indexOf(project) - 1)}
+                        disabled={projects.indexOf(project) <= 0}
+                        className="p-1.5 rounded-lg hover:bg-surface-elevated text-text-secondary hover:text-primary transition-colors disabled:opacity-30 disabled:pointer-events-none"
+                        aria-label={`Move ${project.title} up`}
+                      >
+                        <ChevronUp className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleMove(project, projects.indexOf(project) + 1)}
+                        disabled={projects.indexOf(project) >= projects.length - 1}
+                        className="p-1.5 rounded-lg hover:bg-surface-elevated text-text-secondary hover:text-primary transition-colors disabled:opacity-30 disabled:pointer-events-none"
+                        aria-label={`Move ${project.title} down`}
+                      >
+                        <ChevronDown className="w-4 h-4" />
+                      </button>
                       <button
                         type="button"
                         onClick={() => openEdit(project)}
@@ -296,36 +339,3 @@ export default function AdminProjectsPage() {
     </div>
   );
 }
-
-const MOCK_PROJECTS: Project[] = [
-  {
-    id: "1",
-    title: "Distributed Cache System",
-    description: "High-performance caching layer with consistent hashing and TTL eviction.",
-    techs: ["Node.js", "Redis", "Docker", "AWS"],
-    featured: true,
-    order: 1,
-    createdAt: "2024-01-01",
-    updatedAt: "2024-01-01",
-  },
-  {
-    id: "2",
-    title: "Realtime Analytics Dashboard",
-    description: "Live metrics dashboard with WebSocket streaming and alerting.",
-    techs: ["React", "Next.js", "GraphQL", "PostgreSQL"],
-    featured: true,
-    order: 2,
-    createdAt: "2024-01-02",
-    updatedAt: "2024-01-02",
-  },
-  {
-    id: "3",
-    title: "API Gateway & Rate Limiter",
-    description: "Edge gateway handling auth and rate limiting for 50+ microservices.",
-    techs: ["Node.js", "Kubernetes", "Redis", "CI/CD"],
-    featured: false,
-    order: 3,
-    createdAt: "2024-01-03",
-    updatedAt: "2024-01-03",
-  },
-];

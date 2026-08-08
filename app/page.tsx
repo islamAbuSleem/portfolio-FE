@@ -6,8 +6,16 @@ import { FeaturedProjects } from "@/components/sections/FeaturedProjects";
 import { ContactSection } from "@/components/sections/ContactSection";
 import { Footer } from "@/components/sections/Footer";
 import { PortfolioNavbar } from "@/components/portfolio/PortfolioNavbar";
+import { getAbout, getExperience, getProjects, getSkills } from "@/lib/api";
 
-export default function Home() {
+export default async function Home() {
+  const [about, skills, experience, projects] = await Promise.all([
+    getAbout().catch(() => null),
+    getSkills().catch(() => []),
+    getExperience().catch(() => []),
+    getProjects().catch(() => []),
+  ]);
+
   return (
     <>
       <PortfolioNavbar />
@@ -15,17 +23,21 @@ export default function Home() {
         <Hero />
         <AboutSection
           title="About Me"
-          description="I'm a senior full-stack engineer with a passion for building high-performance distributed systems and immersive frontend experiences. I thrive on turning complex problems into elegant, scalable solutions."
+          description={about?.bio ?? "Add your story from the admin panel."}
           avatar={
-            <div className="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-              <span className="text-6xl">👨‍💻</span>
-            </div>
+            about?.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={about.avatarUrl} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                <span className="text-6xl">👨‍💻</span>
+              </div>
+            )
           }
-          tags={["Expertly Crafted", "Solution Driven", "Performance First"]}
         />
-        <SkillsSection />
-        <ExperienceSection />
-        <FeaturedProjects />
+        <SkillsSection skills={skills} />
+        <ExperienceSection experiences={experience} />
+        <FeaturedProjects projects={projects} />
         <ContactSection />
         <Footer />
       </main>

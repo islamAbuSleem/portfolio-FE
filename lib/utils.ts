@@ -239,3 +239,14 @@ export const capitalize = (str: string): string => {
 export const removeAccents = (str: string): string => {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 };
+
+/**
+ * Format ISO dates into a timeline period, e.g. "Jan 2022 — Present"
+ */
+export const formatPeriod = (startDate: string, endDate?: string): string => {
+  const format = (iso: string) =>
+    new Date(iso).toLocaleDateString("en-US", { month: "short", year: "numeric" });
+  return endDate
+    ? `${format(startDate)} — ${format(endDate)}`
+    : `${format(startDate)} — Present`;
+};
