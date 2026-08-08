@@ -52,6 +52,7 @@ export default function AdminProjectsPage() {
     updateItem,
     deleteItem,
     moveItem,
+    isMutating,
   } = useCrudResource<Project>([], { remote: projectsRemote });
 
   const [formData, setFormData] = useState<FormData>({ ...EMPTY_FORM });
@@ -322,7 +323,7 @@ export default function AdminProjectsPage() {
             <Button variant="ghost" type="button" onClick={closeModal}>
               Cancel
             </Button>
-            <Button variant="primary" type="submit">
+            <Button variant="primary" type="submit" isLoading={isMutating}>
               {editingItem ? "Update" : "Create"}
             </Button>
           </div>

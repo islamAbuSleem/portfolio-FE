@@ -44,6 +44,7 @@ export default function AdminExperiencePage() {
     updateItem,
     deleteItem,
     moveItem,
+    isMutating,
   } = useCrudResource<Experience>([], { remote: experienceRemote });
 
   const [formData, setFormData] = useState<FormData>({ ...EMPTY_FORM });
@@ -257,7 +258,7 @@ export default function AdminExperiencePage() {
             <Button variant="ghost" type="button" onClick={closeModal}>
               Cancel
             </Button>
-            <Button variant="primary" type="submit">
+            <Button variant="primary" type="submit" isLoading={isMutating}>
               {editingItem ? "Update" : "Create"}
             </Button>
           </div>

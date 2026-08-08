@@ -50,6 +50,7 @@ export default function AdminSkillsPage() {
     updateItem,
     deleteItem,
     moveItem,
+    isMutating,
   } = useCrudResource<Skill>([], { remote: skillsRemote });
 
   const [formData, setFormData] = useState<FormData>({ ...EMPTY_FORM });
@@ -252,7 +253,7 @@ export default function AdminSkillsPage() {
             <Button variant="ghost" type="button" onClick={closeModal}>
               Cancel
             </Button>
-            <Button variant="primary" type="submit">
+            <Button variant="primary" type="submit" isLoading={isMutating}>
               {editingItem ? "Update" : "Create"}
             </Button>
           </div>
