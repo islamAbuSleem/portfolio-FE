@@ -9,10 +9,23 @@ import { Modal } from "@/components/ui/Modal";
 import { Textarea } from "@/components/ui/Textarea";
 import { ConfirmationDialog } from "@/components/ui/ConfirmationDialog";
 import { useToast } from "@/components/ui/Toast";
-import { useCrudResource } from "@/hooks/useCrudResource";
+import { useCrudResource, RemoteCrud } from "@/hooks/useCrudResource";
 import { Validators, parseCommaSeparated } from "@/lib/validation";
 import { Plus, Edit2, Trash2, Star } from "lucide-react";
-import { Project } from "@/lib/api";
+import {
+  Project,
+  createProject,
+  deleteProject,
+  getProjects,
+  updateProject,
+} from "@/lib/api";
+
+const projectsRemote: RemoteCrud<Project> = {
+  list: () => getProjects(),
+  create: (data) => createProject(data),
+  update: (id, data) => updateProject(id, data),
+  remove: (id) => deleteProject(id),
+};
 
 const EMPTY_FORM = {
   title: "",
@@ -36,7 +49,7 @@ export default function AdminProjectsPage() {
     createItem,
     updateItem,
     deleteItem,
-  } = useCrudResource<Project>(MOCK_PROJECTS);
+  } = useCrudResource<Project>([], { remote: projectsRemote });
 
   const [formData, setFormData] = useState<FormData>({ ...EMPTY_FORM });
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof FormData, string>>>({});
@@ -296,36 +309,3 @@ export default function AdminProjectsPage() {
     </div>
   );
 }
-
-const MOCK_PROJECTS: Project[] = [
-  {
-    id: "1",
-    title: "Distributed Cache System",
-    description: "High-performance caching layer with consistent hashing and TTL eviction.",
-    techs: ["Node.js", "Redis", "Docker", "AWS"],
-    featured: true,
-    order: 1,
-    createdAt: "2024-01-01",
-    updatedAt: "2024-01-01",
-  },
-  {
-    id: "2",
-    title: "Realtime Analytics Dashboard",
-    description: "Live metrics dashboard with WebSocket streaming and alerting.",
-    techs: ["React", "Next.js", "GraphQL", "PostgreSQL"],
-    featured: true,
-    order: 2,
-    createdAt: "2024-01-02",
-    updatedAt: "2024-01-02",
-  },
-  {
-    id: "3",
-    title: "API Gateway & Rate Limiter",
-    description: "Edge gateway handling auth and rate limiting for 50+ microservices.",
-    techs: ["Node.js", "Kubernetes", "Redis", "CI/CD"],
-    featured: false,
-    order: 3,
-    createdAt: "2024-01-03",
-    updatedAt: "2024-01-03",
-  },
-];

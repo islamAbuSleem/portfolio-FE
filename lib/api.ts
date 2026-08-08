@@ -84,6 +84,17 @@ export interface ReorderInput {
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "/api";
 
+/**
+ * Server Components bypass Next rewrites (they fetch against the origin
+ * directly), so SSR resolves the API's absolute URL while the browser
+ * keeps using the relative /api alias.
+ */
+const SSR_API_BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
+
+function resolveApiBase(): string {
+  return typeof window === "undefined" ? SSR_API_BASE : API_BASE;
+}
+
 async function handleResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
@@ -100,32 +111,32 @@ async function handleEmptyResponse(res: Response): Promise<void> {
 }
 
 export async function getMe(): Promise<User & { skills: Skill[]; experience: Experience[]; projects: Project[]; about: About }> {
-  const res = await fetch(`${API_BASE}/auth/me`, { credentials: "include" });
+  const res = await fetch(`${resolveApiBase()}/auth/me`, { credentials: "include" });
   return handleResponse(res);
 }
 
 export async function getAbout(): Promise<About | null> {
-  const res = await fetch(`${API_BASE}/about`, { cache: "no-store" });
+  const res = await fetch(`${resolveApiBase()}/about`, { cache: "no-store" });
   return handleResponse(res);
 }
 
 export async function getSkills(): Promise<Skill[]> {
-  const res = await fetch(`${API_BASE}/skills`, { cache: "no-store" });
+  const res = await fetch(`${resolveApiBase()}/skills`, { cache: "no-store" });
   return handleResponse(res);
 }
 
 export async function getExperience(): Promise<Experience[]> {
-  const res = await fetch(`${API_BASE}/experience`, { cache: "no-store" });
+  const res = await fetch(`${resolveApiBase()}/experience`, { cache: "no-store" });
   return handleResponse(res);
 }
 
 export async function getProjects(): Promise<Project[]> {
-  const res = await fetch(`${API_BASE}/projects`, { cache: "no-store" });
+  const res = await fetch(`${resolveApiBase()}/projects`, { cache: "no-store" });
   return handleResponse(res);
 }
 
 export async function updateAbout(data: { bio: string; avatarUrl?: string; resumeUrl?: string }): Promise<About> {
-  const res = await fetch(`${API_BASE}/about`, {
+  const res = await fetch(`${resolveApiBase()}/about`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -135,7 +146,7 @@ export async function updateAbout(data: { bio: string; avatarUrl?: string; resum
 }
 
 export async function createSkill(data: CreateSkillInput): Promise<Skill> {
-  const res = await fetch(`${API_BASE}/skills`, {
+  const res = await fetch(`${resolveApiBase()}/skills`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -145,7 +156,7 @@ export async function createSkill(data: CreateSkillInput): Promise<Skill> {
 }
 
 export async function updateSkill(id: string, data: Partial<Skill>): Promise<Skill> {
-  const res = await fetch(`${API_BASE}/skills/${id}`, {
+  const res = await fetch(`${resolveApiBase()}/skills/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -155,7 +166,7 @@ export async function updateSkill(id: string, data: Partial<Skill>): Promise<Ski
 }
 
 export async function deleteSkill(id: string): Promise<void> {
-  const res = await fetch(`${API_BASE}/skills/${id}`, {
+  const res = await fetch(`${resolveApiBase()}/skills/${id}`, {
     method: "DELETE",
     credentials: "include",
   });
@@ -163,7 +174,7 @@ export async function deleteSkill(id: string): Promise<void> {
 }
 
 export async function reorderSkills(items: ReorderInput[]): Promise<void> {
-  const res = await fetch(`${API_BASE}/skills/reorder`, {
+  const res = await fetch(`${resolveApiBase()}/skills/reorder`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -173,7 +184,7 @@ export async function reorderSkills(items: ReorderInput[]): Promise<void> {
 }
 
 export async function createExperience(data: CreateExperienceInput): Promise<Experience> {
-  const res = await fetch(`${API_BASE}/experience`, {
+  const res = await fetch(`${resolveApiBase()}/experience`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -183,7 +194,7 @@ export async function createExperience(data: CreateExperienceInput): Promise<Exp
 }
 
 export async function updateExperience(id: string, data: Partial<Experience>): Promise<Experience> {
-  const res = await fetch(`${API_BASE}/experience/${id}`, {
+  const res = await fetch(`${resolveApiBase()}/experience/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -193,7 +204,7 @@ export async function updateExperience(id: string, data: Partial<Experience>): P
 }
 
 export async function deleteExperience(id: string): Promise<void> {
-  const res = await fetch(`${API_BASE}/experience/${id}`, {
+  const res = await fetch(`${resolveApiBase()}/experience/${id}`, {
     method: "DELETE",
     credentials: "include",
   });
@@ -201,7 +212,7 @@ export async function deleteExperience(id: string): Promise<void> {
 }
 
 export async function reorderExperience(items: ReorderInput[]): Promise<void> {
-  const res = await fetch(`${API_BASE}/experience/reorder`, {
+  const res = await fetch(`${resolveApiBase()}/experience/reorder`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -211,7 +222,7 @@ export async function reorderExperience(items: ReorderInput[]): Promise<void> {
 }
 
 export async function createProject(data: CreateProjectInput): Promise<Project> {
-  const res = await fetch(`${API_BASE}/projects`, {
+  const res = await fetch(`${resolveApiBase()}/projects`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -221,7 +232,7 @@ export async function createProject(data: CreateProjectInput): Promise<Project> 
 }
 
 export async function updateProject(id: string, data: Partial<Project>): Promise<Project> {
-  const res = await fetch(`${API_BASE}/projects/${id}`, {
+  const res = await fetch(`${resolveApiBase()}/projects/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -231,7 +242,7 @@ export async function updateProject(id: string, data: Partial<Project>): Promise
 }
 
 export async function deleteProject(id: string): Promise<void> {
-  const res = await fetch(`${API_BASE}/projects/${id}`, {
+  const res = await fetch(`${resolveApiBase()}/projects/${id}`, {
     method: "DELETE",
     credentials: "include",
   });
@@ -239,7 +250,7 @@ export async function deleteProject(id: string): Promise<void> {
 }
 
 export async function reorderProjects(items: ReorderInput[]): Promise<void> {
-  const res = await fetch(`${API_BASE}/projects/reorder`, {
+  const res = await fetch(`${resolveApiBase()}/projects/reorder`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     credentials: "include",

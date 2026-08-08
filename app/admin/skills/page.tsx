@@ -7,12 +7,19 @@ import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { ConfirmationDialog } from "@/components/ui/ConfirmationDialog";
 import { useToast } from "@/components/ui/Toast";
-import { useCrudResource } from "@/hooks/useCrudResource";
+import { useCrudResource, RemoteCrud } from "@/hooks/useCrudResource";
 import { Validators } from "@/lib/validation";
 import { Plus, Edit2, Trash2 } from "lucide-react";
-import { Skill, SkillCategory } from "@/lib/api";
+import { Skill, SkillCategory, createSkill, deleteSkill, getSkills, updateSkill } from "@/lib/api";
 
 const CATEGORIES: SkillCategory[] = ["Frontend", "Backend", "DevOps", "Tools", "Other"];
+
+const skillsRemote: RemoteCrud<Skill> = {
+  list: () => getSkills(),
+  create: (data) => createSkill(data),
+  update: (id, data) => updateSkill(id, data),
+  remove: (id) => deleteSkill(id),
+};
 
 const EMPTY_FORM = {
   name: "",
@@ -33,7 +40,7 @@ export default function AdminSkillsPage() {
     createItem,
     updateItem,
     deleteItem,
-  } = useCrudResource<Skill>(MOCK_SKILLS);
+  } = useCrudResource<Skill>([], { remote: skillsRemote });
 
   const [formData, setFormData] = useState<FormData>({ ...EMPTY_FORM });
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof FormData, string>>>({});
@@ -222,12 +229,3 @@ export default function AdminSkillsPage() {
     </div>
   );
 }
-
-const MOCK_SKILLS: Skill[] = [
-  { id: "1", name: "React", category: "Frontend", proficiency: 95, order: 1, createdAt: "2024-01-01", updatedAt: "2024-01-01" },
-  { id: "2", name: "Next.js", category: "Frontend", proficiency: 90, order: 2, createdAt: "2024-01-01", updatedAt: "2024-01-01" },
-  { id: "3", name: "TypeScript", category: "Frontend", proficiency: 90, order: 3, createdAt: "2024-01-01", updatedAt: "2024-01-01" },
-  { id: "4", name: "Node.js", category: "Backend", proficiency: 88, order: 4, createdAt: "2024-01-01", updatedAt: "2024-01-01" },
-  { id: "5", name: "PostgreSQL", category: "Backend", proficiency: 85, order: 5, createdAt: "2024-01-01", updatedAt: "2024-01-01" },
-  { id: "6", name: "Docker", category: "DevOps", proficiency: 82, order: 6, createdAt: "2024-01-01", updatedAt: "2024-01-01" },
-];

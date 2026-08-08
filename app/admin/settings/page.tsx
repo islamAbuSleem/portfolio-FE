@@ -1,29 +1,62 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { useToast } from "@/components/ui/Toast";
+import { getAbout, updateAbout } from "@/lib/api";
 
-const MOCK_ABOUT = {
-  bio: "I'm a senior full-stack engineer with a passion for building high-performance distributed systems and immersive frontend experiences. I thrive on turning complex problems into elegant, scalable solutions.",
-  avatarUrl: "",
-  resumeUrl: "",
-};
+const EMPTY_ABOUT = { bio: "", avatarUrl: "", resumeUrl: "" };
 
 export default function AdminSettingsPage() {
-  const [formData, setFormData] = useState(MOCK_ABOUT);
+  const [formData, setFormData] = useState(EMPTY_ABOUT);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const { addToast } = useToast();
+
+  useEffect(() => {
+    let active = true;
+    getAbout()
+      .then((about) => {
+        if (!active || !about) return;
+        setFormData({
+          bio: about.bio,
+          avatarUrl: about.avatarUrl ?? "",
+          resumeUrl: about.resumeUrl ?? "",
+        });
+      })
+      .catch(() => {
+        if (active) addToast({ type: "error", title: "Failed to load profile" });
+      })
+      .finally(() => {
+        if (active) setIsLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [addToast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    await new Promise((r) => setTimeout(r, 1000));
-    setIsSaving(false);
-    addToast({ type: "success", title: "Settings saved" });
+    try {
+      await updateAbout({
+        bio: formData.bio,
+        avatarUrl: formData.avatarUrl || undefined,
+        resumeUrl: formData.resumeUrl || undefined,
+      });
+      addToast({ type: "success", title: "Settings saved" });
+    } catch (err) {
+      addToast({
+        type: "error",
+        title: "Save failed",
+        message: err instanceof Error ? err.message : "An unexpected error occurred",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -34,23 +67,27 @@ export default function AdminSettingsPage() {
       </div>
 
       <GlassCard className="p-8">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <Textarea
-            label="Bio"
-            value={formData.bio}
-            onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-            rows={6}
-          />
+        {isLoading ? (
+          <p className="text-body-md text-text-secondary">Loading profile…</p>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <Textarea
+              label="Bio"
+              value={formData.bio}
+              onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+              rows={6}
+            />
 
-          <Input label="Avatar URL" value={formData.avatarUrl} onChange={(e) => setFormData({ ...formData, avatarUrl: e.target.value })} placeholder="https://..." />
-          <Input label="Resume URL" value={formData.resumeUrl} onChange={(e) => setFormData({ ...formData, resumeUrl: e.target.value })} placeholder="https://..." />
+            <Input label="Avatar URL" value={formData.avatarUrl} onChange={(e) => setFormData({ ...formData, avatarUrl: e.target.value })} placeholder="https://..." />
+            <Input label="Resume URL" value={formData.resumeUrl} onChange={(e) => setFormData({ ...formData, resumeUrl: e.target.value })} placeholder="https://..." />
 
-          <div className="flex justify-end pt-4">
-            <Button variant="primary" type="submit" isLoading={isSaving}>
-              Save Changes
-            </Button>
-          </div>
-        </form>
+            <div className="flex justify-end pt-4">
+              <Button variant="primary" type="submit" isLoading={isSaving}>
+                Save Changes
+              </Button>
+            </div>
+          </form>
+        )}
       </GlassCard>
     </div>
   );

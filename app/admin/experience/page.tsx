@@ -8,10 +8,23 @@ import { Modal } from "@/components/ui/Modal";
 import { Textarea } from "@/components/ui/Textarea";
 import { ConfirmationDialog } from "@/components/ui/ConfirmationDialog";
 import { useToast } from "@/components/ui/Toast";
-import { useCrudResource } from "@/hooks/useCrudResource";
+import { useCrudResource, RemoteCrud } from "@/hooks/useCrudResource";
 import { Validators } from "@/lib/validation";
 import { Plus, Edit2, Trash2 } from "lucide-react";
-import { Experience } from "@/lib/api";
+import {
+  Experience,
+  createExperience,
+  deleteExperience,
+  getExperience,
+  updateExperience,
+} from "@/lib/api";
+
+const experienceRemote: RemoteCrud<Experience> = {
+  list: () => getExperience(),
+  create: (data) => createExperience(data),
+  update: (id, data) => updateExperience(id, data),
+  remove: (id) => deleteExperience(id),
+};
 
 const EMPTY_FORM = { company: "", role: "", startDate: "", endDate: "", description: "" };
 
@@ -28,7 +41,7 @@ export default function AdminExperiencePage() {
     createItem,
     updateItem,
     deleteItem,
-  } = useCrudResource<Experience>(MOCK_EXPERIENCE);
+  } = useCrudResource<Experience>([], { remote: experienceRemote });
 
   const [formData, setFormData] = useState<FormData>({ ...EMPTY_FORM });
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof FormData, string>>>({});
@@ -231,9 +244,3 @@ export default function AdminExperiencePage() {
     </div>
   );
 }
-
-const MOCK_EXPERIENCE: Experience[] = [
-  { id: "1", company: "TechCorp Inc.", role: "Senior Full-Stack Engineer", startDate: "2022-01-01", description: "Leading architecture decisions for a distributed platform.", order: 1, createdAt: "2024-01-01", updatedAt: "2024-01-01" },
-  { id: "2", company: "StartupXYZ", role: "Full-Stack Engineer", startDate: "2019-06-01", endDate: "2022-01-01", description: "Shipped core product from 0 to 50K users.", order: 2, createdAt: "2024-01-01", updatedAt: "2024-01-01" },
-  { id: "3", company: "Digital Agency", role: "Software Engineer", startDate: "2017-09-01", endDate: "2019-06-01", description: "Developed client-facing web applications.", order: 3, createdAt: "2024-01-01", updatedAt: "2024-01-01" },
-];
