@@ -1,20 +1,16 @@
 "use client";
 
 import { ReactNode } from "react";
-import { TagPill } from "@/components/ui/TagPill";
-import Link from "next/link";
 import { useScrollBlur } from "@/hooks/useScrollBlur";
 
 export function AboutSection({
   title,
   description,
   avatar,
-  tags,
 }: {
   title: string;
   description: string;
   avatar?: ReactNode;
-  tags?: string[];
 }) {
   const isBlurred = useScrollBlur(80);
 
@@ -44,17 +40,6 @@ export function AboutSection({
             <p className="text-body-md text-text-secondary leading-relaxed mb-6">
               {description}
             </p>
-            {tags && tags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {tags.map((tag) => (
-                  <Link key={tag} href={`/projects?skill=${encodeURIComponent(tag)}`}>
-                    <TagPill variant="primary" size="md" className="cursor-pointer hover:bg-primary/25 transition-colors">
-                      {tag}
-                    </TagPill>
-                  </Link>
-                ))}
-              </div>
-            )}
           </div>
         </div>
       </div>

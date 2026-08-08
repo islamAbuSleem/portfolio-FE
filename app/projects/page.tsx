@@ -1,16 +1,23 @@
-import { projects } from "@/data/projects";
 import Link from "next/link";
 import { TagPill } from "@/components/ui/TagPill";
+import { getProjects } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
-export default function ProjectsPage({ searchParams }: { searchParams: { skill?: string } }) {
-  const selectedSkill = searchParams.skill;
+export default async function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ skill?: string }>;
+}) {
+  const { skill } = await searchParams;
+  const projects = await getProjects().catch(() => []);
+
+  const selectedSkill = skill;
   const filtered = selectedSkill
-    ? projects.filter((p) => p.tech.some((t) => t.toLowerCase() === selectedSkill.toLowerCase()))
+    ? projects.filter((p) => p.techs.some((t) => t.toLowerCase() === selectedSkill.toLowerCase()))
     : projects;
 
-  const uniqueSkills = Array.from(new Set(projects.flatMap((p) => p.tech))).sort();
+  const uniqueSkills = Array.from(new Set(projects.flatMap((p) => p.techs))).sort();
 
   return (
     <div className="py-24 px-6">
@@ -54,7 +61,11 @@ export default function ProjectsPage({ searchParams }: { searchParams: { skill?:
 
         {filtered.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-body-lg text-text-secondary mb-4">No projects found for this skill.</p>
+            <p className="text-body-lg text-text-secondary mb-4">
+              {projects.length === 0
+                ? "No projects have been added yet — check back soon."
+                : `No projects found for this skill.`}
+            </p>
             <Link href="/projects" className="text-primary hover:underline font-medium">
               View all projects
             </Link>
@@ -67,7 +78,16 @@ export default function ProjectsPage({ searchParams }: { searchParams: { skill?:
                 className="glass rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group"
               >
                 <div className="relative h-40 bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
-                  <span className="text-4xl opacity-40 group-hover:opacity-60 transition-opacity">📦</span>
+                  {project.imageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={project.imageUrl}
+                      alt={project.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-4xl opacity-40 group-hover:opacity-60 transition-opacity">📦</span>
+                  )}
                   {project.featured && (
                     <span className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-primary text-on-primary text-label-sm font-medium">
                       Featured
@@ -82,24 +102,28 @@ export default function ProjectsPage({ searchParams }: { searchParams: { skill?:
                     {project.description}
                   </p>
                   <div className="flex flex-wrap gap-1.5 mb-4">
-                    {project.tech.map((t) => (
+                    {project.techs.map((t) => (
                       <TagPill key={t} variant="outline" size="sm">
                         {t}
                       </TagPill>
                     ))}
                   </div>
                   <div className="flex items-center gap-3">
-                    {project.links?.github && (
+                    {project.githubUrl && (
                       <a
-                        href={project.links.github}
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="text-text-secondary hover:text-primary transition-colors text-sm"
                       >
                         GitHub
                       </a>
                     )}
-                    {project.links?.live && (
+                    {project.liveUrl && (
                       <a
-                        href={project.links.live}
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="text-text-secondary hover:text-primary transition-colors text-sm"
                       >
                         Live Demo

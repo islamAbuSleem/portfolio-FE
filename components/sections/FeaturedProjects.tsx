@@ -1,11 +1,11 @@
 "use client";
 
-import { projects } from "@/data/projects";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import Link from "next/link";
 import { TagPill } from "@/components/ui/TagPill";
+import { Project } from "@/lib/api";
 
-export function FeaturedProjects() {
+export function FeaturedProjects({ projects }: { projects: Project[] }) {
   const featured = projects.filter((p) => p.featured).slice(0, 3);
 
   return (
@@ -31,13 +31,28 @@ export function FeaturedProjects() {
           </div>
         </ScrollReveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featured.map((project, index) => (
-            <ScrollReveal key={project.id} delay={index * 100}>
-              <Link href={`/projects?skill=${encodeURIComponent(project.tech[0])}`} className="block group">
-                <div className="glass rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg h-full flex flex-col">
+        {featured.length === 0 ? (
+          <div className="glass rounded-2xl p-10 text-center">
+            <p className="text-body-md text-text-secondary">
+              No featured projects yet — the gallery is waiting for its first highlight.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featured.map((project, index) => (
+              <ScrollReveal key={project.id} delay={index * 100}>
+                <div className="glass rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg h-full flex flex-col group">
                   <div className="relative h-40 bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
-                    <span className="text-4xl opacity-40 group-hover:opacity-60 transition-opacity">📦</span>
+                    {project.imageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={project.imageUrl}
+                        alt={project.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-4xl opacity-40 group-hover:opacity-60 transition-opacity">📦</span>
+                    )}
                     {project.featured && (
                       <span className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-primary text-on-primary text-label-sm font-medium">
                         Featured
@@ -52,30 +67,45 @@ export function FeaturedProjects() {
                       {project.description}
                     </p>
                     <div className="flex flex-wrap gap-1.5 mb-4">
-                      {project.tech.map((t) => (
+                      {project.techs.map((t) => (
                         <TagPill key={t} variant="outline" size="sm">
                           {t}
                         </TagPill>
                       ))}
                     </div>
                     <div className="flex items-center gap-3 mt-auto">
-                      {project.links?.github && (
-                        <span className="text-text-secondary group-hover:text-primary transition-colors text-sm">
+                      {project.githubUrl && (
+                        <a
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-text-secondary group-hover:text-primary transition-colors text-sm"
+                        >
                           GitHub
-                        </span>
+                        </a>
                       )}
-                      {project.links?.live && (
-                        <span className="text-text-secondary group-hover:text-primary transition-colors text-sm">
+                      {project.liveUrl && (
+                        <a
+                          href={project.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-text-secondary group-hover:text-primary transition-colors text-sm"
+                        >
                           Live Demo
+                        </a>
+                      )}
+                      {!project.githubUrl && !project.liveUrl && (
+                        <span className="text-text-secondary text-sm">
+                          {project.techs[0] ?? "Skills"}
                         </span>
                       )}
                     </div>
                   </div>
                 </div>
-              </Link>
-            </ScrollReveal>
-          ))}
-        </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        )}
 
         <div className="mt-8 text-center sm:hidden">
           <Link
