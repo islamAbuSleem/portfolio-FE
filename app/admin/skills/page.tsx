@@ -50,6 +50,7 @@ export default function AdminSkillsPage() {
     updateItem,
     deleteItem,
     moveItem,
+    isMutating,
   } = useCrudResource<Skill>([], { remote: skillsRemote });
 
   const [formData, setFormData] = useState<FormData>({ ...EMPTY_FORM });
@@ -168,7 +169,7 @@ export default function AdminSkillsPage() {
                         <button
                           type="button"
                           onClick={() => handleMove(skill, flatIndex - 1)}
-                          disabled={flatIndex <= 0}
+                          disabled={flatIndex <= 0 || isMutating}
                           className="p-1 rounded hover:bg-surface-elevated text-text-secondary hover:text-primary transition-colors disabled:opacity-30 disabled:pointer-events-none"
                           aria-label={`Move ${skill.name} up`}
                         >
@@ -177,7 +178,7 @@ export default function AdminSkillsPage() {
                         <button
                           type="button"
                           onClick={() => handleMove(skill, flatIndex + 1)}
-                          disabled={flatIndex >= skills.length - 1}
+                          disabled={flatIndex >= skills.length - 1 || isMutating}
                           className="p-1 rounded hover:bg-surface-elevated text-text-secondary hover:text-primary transition-colors disabled:opacity-30 disabled:pointer-events-none"
                           aria-label={`Move ${skill.name} down`}
                         >
@@ -252,7 +253,7 @@ export default function AdminSkillsPage() {
             <Button variant="ghost" type="button" onClick={closeModal}>
               Cancel
             </Button>
-            <Button variant="primary" type="submit">
+            <Button variant="primary" type="submit" isLoading={isMutating}>
               {editingItem ? "Update" : "Create"}
             </Button>
           </div>

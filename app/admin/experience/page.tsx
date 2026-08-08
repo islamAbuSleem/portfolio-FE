@@ -44,6 +44,7 @@ export default function AdminExperiencePage() {
     updateItem,
     deleteItem,
     moveItem,
+    isMutating,
   } = useCrudResource<Experience>([], { remote: experienceRemote });
 
   const [formData, setFormData] = useState<FormData>({ ...EMPTY_FORM });
@@ -177,7 +178,7 @@ export default function AdminExperiencePage() {
                 <button
                   type="button"
                   onClick={() => handleMove(item, experience.indexOf(item) - 1)}
-                  disabled={experience.indexOf(item) <= 0}
+                  disabled={experience.indexOf(item) <= 0 || isMutating}
                   className="p-1.5 rounded-lg hover:bg-surface-elevated text-text-secondary hover:text-primary transition-colors disabled:opacity-30 disabled:pointer-events-none"
                   aria-label={`Move ${item.role} at ${item.company} up`}
                 >
@@ -186,7 +187,7 @@ export default function AdminExperiencePage() {
                 <button
                   type="button"
                   onClick={() => handleMove(item, experience.indexOf(item) + 1)}
-                  disabled={experience.indexOf(item) >= experience.length - 1}
+                  disabled={experience.indexOf(item) >= experience.length - 1 || isMutating}
                   className="p-1.5 rounded-lg hover:bg-surface-elevated text-text-secondary hover:text-primary transition-colors disabled:opacity-30 disabled:pointer-events-none"
                   aria-label={`Move ${item.role} at ${item.company} down`}
                 >
@@ -257,7 +258,7 @@ export default function AdminExperiencePage() {
             <Button variant="ghost" type="button" onClick={closeModal}>
               Cancel
             </Button>
-            <Button variant="primary" type="submit">
+            <Button variant="primary" type="submit" isLoading={isMutating}>
               {editingItem ? "Update" : "Create"}
             </Button>
           </div>

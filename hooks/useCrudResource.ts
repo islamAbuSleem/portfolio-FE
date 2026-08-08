@@ -72,6 +72,7 @@ export function useCrudResource<T extends WithId>(
 
   const [items, setItems] = useState<T[]>(remote ? [] : seed);
   const [isLoading, setIsLoading] = useState<boolean>(!!remote);
+  const [isMutating, setIsMutating] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<T | null>(null);
@@ -126,34 +127,37 @@ export function useCrudResource<T extends WithId>(
         throw new Error("Create cancelled by onBeforeCreate");
       }
 
-      if (remote) {
-        try {
+      setIsMutating(true);
+      try {
+        if (remote) {
           const created = await remote.create(data);
           setItems((prev) => [...prev, created]);
           if (callbacks.onSuccess) callbacks.onSuccess(created);
           return created;
-        } catch (err) {
-          const normalized = normalizeError(err);
-          setErrorState(normalized);
-          if (callbacks.onError) callbacks.onError(normalized);
-          throw normalized;
         }
+
+        const now = new Date().toISOString();
+        const newItem = {
+          ...(data as object),
+          id: generateUniqueId(),
+          order: items.length + 1,
+          createdAt: now,
+          updatedAt: now,
+        } as T;
+
+        previousItemsRef.current = deepClone(items);
+        setItems((prev) => [...prev, newItem]);
+
+        if (callbacks.onSuccess) callbacks.onSuccess(newItem);
+        return newItem;
+      } catch (err) {
+        const normalized = normalizeError(err);
+        setErrorState(normalized);
+        if (callbacks.onError) callbacks.onError(normalized);
+        throw normalized;
+      } finally {
+        setIsMutating(false);
       }
-
-      const now = new Date().toISOString();
-      const newItem = {
-        ...(data as object),
-        id: generateUniqueId(),
-        order: items.length + 1,
-        createdAt: now,
-        updatedAt: now,
-      } as T;
-
-      previousItemsRef.current = deepClone(items);
-      setItems((prev) => [...prev, newItem]);
-
-      if (callbacks.onSuccess) callbacks.onSuccess(newItem);
-      return newItem;
     },
     [remote, items, setErrorState]
   );
@@ -164,28 +168,31 @@ export function useCrudResource<T extends WithId>(
         return;
       }
 
-      if (remote) {
-        try {
+      setIsMutating(true);
+      try {
+        if (remote) {
           const updated = await remote.update(id, data);
           setItems((prev) => prev.map((item) => (item.id === id ? updated : item)));
           if (callbacks.onSuccess) callbacks.onSuccess(updated);
           return;
-        } catch (err) {
-          const normalized = normalizeError(err);
-          setErrorState(normalized);
-          if (callbacks.onError) callbacks.onError(normalized);
-          throw normalized;
         }
-      }
 
-      previousItemsRef.current = deepClone(items);
-      setItems((prev) =>
-        prev.map((item) => {
-          if (item.id !== id) return item;
-          return { ...item, ...data, updatedAt: new Date().toISOString() } as T;
-        })
-      );
-      if (callbacks.onSuccess) callbacks.onSuccess(undefined as unknown as T);
+        previousItemsRef.current = deepClone(items);
+        setItems((prev) =>
+          prev.map((item) => {
+            if (item.id !== id) return item;
+            return { ...item, ...data, updatedAt: new Date().toISOString() } as T;
+          })
+        );
+        if (callbacks.onSuccess) callbacks.onSuccess(undefined as unknown as T);
+      } catch (err) {
+        const normalized = normalizeError(err);
+        setErrorState(normalized);
+        if (callbacks.onError) callbacks.onError(normalized);
+        throw normalized;
+      } finally {
+        setIsMutating(false);
+      }
     },
     [remote, items, setErrorState]
   );
@@ -196,23 +203,26 @@ export function useCrudResource<T extends WithId>(
         return;
       }
 
-      if (remote) {
-        try {
+      setIsMutating(true);
+      try {
+        if (remote) {
           await remote.remove(id);
           setItems((prev) => prev.filter((item) => item.id !== id));
           if (callbacks.onSuccess) callbacks.onSuccess();
           return;
-        } catch (err) {
-          const normalized = normalizeError(err);
-          setErrorState(normalized);
-          if (callbacks.onError) callbacks.onError(normalized);
-          throw normalized;
         }
-      }
 
-      previousItemsRef.current = deepClone(items);
-      setItems((prev) => prev.filter((item) => item.id !== id));
-      if (callbacks.onSuccess) callbacks.onSuccess();
+        previousItemsRef.current = deepClone(items);
+        setItems((prev) => prev.filter((item) => item.id !== id));
+        if (callbacks.onSuccess) callbacks.onSuccess();
+      } catch (err) {
+        const normalized = normalizeError(err);
+        setErrorState(normalized);
+        if (callbacks.onError) callbacks.onError(normalized);
+        throw normalized;
+      } finally {
+        setIsMutating(false);
+      }
     },
     [remote, items, setErrorState]
   );
@@ -276,6 +286,7 @@ export function useCrudResource<T extends WithId>(
       }
 
       setItems(next);
+      setIsMutating(true);
       try {
         await remote.reorder?.(next.map((item, index) => ({ id: item.id, order: index })));
         if (callbacks.onSuccess) callbacks.onSuccess();
@@ -286,6 +297,8 @@ export function useCrudResource<T extends WithId>(
         const rows = await remote.list().catch(() => null);
         if (rows) setItems(rows);
         throw normalized;
+      } finally {
+        setIsMutating(false);
       }
     },
     [remote, items, setErrorState]
@@ -303,6 +316,7 @@ export function useCrudResource<T extends WithId>(
   return {
     items,
     isLoading,
+    isMutating,
     error,
     isModalOpen,
     editingItem,

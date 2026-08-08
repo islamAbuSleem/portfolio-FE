@@ -52,6 +52,7 @@ export default function AdminProjectsPage() {
     updateItem,
     deleteItem,
     moveItem,
+    isMutating,
   } = useCrudResource<Project>([], { remote: projectsRemote });
 
   const [formData, setFormData] = useState<FormData>({ ...EMPTY_FORM });
@@ -223,7 +224,7 @@ export default function AdminProjectsPage() {
                       <button
                         type="button"
                         onClick={() => handleMove(project, projects.indexOf(project) - 1)}
-                        disabled={projects.indexOf(project) <= 0}
+                        disabled={projects.indexOf(project) <= 0 || isMutating}
                         className="p-1.5 rounded-lg hover:bg-surface-elevated text-text-secondary hover:text-primary transition-colors disabled:opacity-30 disabled:pointer-events-none"
                         aria-label={`Move ${project.title} up`}
                       >
@@ -232,7 +233,7 @@ export default function AdminProjectsPage() {
                       <button
                         type="button"
                         onClick={() => handleMove(project, projects.indexOf(project) + 1)}
-                        disabled={projects.indexOf(project) >= projects.length - 1}
+                        disabled={projects.indexOf(project) >= projects.length - 1 || isMutating}
                         className="p-1.5 rounded-lg hover:bg-surface-elevated text-text-secondary hover:text-primary transition-colors disabled:opacity-30 disabled:pointer-events-none"
                         aria-label={`Move ${project.title} down`}
                       >
@@ -322,7 +323,7 @@ export default function AdminProjectsPage() {
             <Button variant="ghost" type="button" onClick={closeModal}>
               Cancel
             </Button>
-            <Button variant="primary" type="submit">
+            <Button variant="primary" type="submit" isLoading={isMutating}>
               {editingItem ? "Update" : "Create"}
             </Button>
           </div>
