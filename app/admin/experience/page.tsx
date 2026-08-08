@@ -65,7 +65,7 @@ export default function AdminExperiencePage() {
       role: item.role,
       startDate: item.startDate.split("T")[0],
       endDate: item.endDate?.split("T")[0] || "",
-      current: !item.endDate,
+      current: item.current ?? !item.endDate,
       description: item.description,
     });
     setFormErrors({});
@@ -112,6 +112,7 @@ export default function AdminExperiencePage() {
       role: formData.role,
       startDate: formData.startDate,
       endDate: formData.current ? undefined : formData.endDate || undefined,
+      current: formData.current,
       description: formData.description,
     };
 

@@ -98,14 +98,14 @@ function ExperienceItem({
           <div className="flex flex-col gap-1">
             <h3 className="text-headline-sm font-semibold text-text">
               {experience.role}
-              {!experience.endDate && (
+              {experience.current || !experience.endDate ? (
                 <span
                   className="inline-block ml-2 px-2 py-0.5 rounded-full bg-primary text-on-primary text-label-sm font-medium"
                   style={{ animation: "now-badge-pulse 2s ease-in-out infinite" }}
                 >
                   NOW
                 </span>
-              )}
+              ) : null}
             </h3>
             <p className="text-primary font-medium">{experience.company}</p>
             <p className="text-label-md text-text-secondary mb-3">
