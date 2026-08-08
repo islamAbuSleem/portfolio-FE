@@ -10,9 +10,9 @@ import { useToast } from "@/components/ui/Toast";
 import { useCrudResource } from "@/hooks/useCrudResource";
 import { Validators } from "@/lib/validation";
 import { Plus, Edit2, Trash2 } from "lucide-react";
-import { Skill } from "@/lib/api";
+import { Skill, SkillCategory } from "@/lib/api";
 
-const CATEGORIES = ["Frontend", "Backend", "DevOps", "Tools", "Other"];
+const CATEGORIES: SkillCategory[] = ["Frontend", "Backend", "DevOps", "Tools", "Other"];
 
 const EMPTY_FORM = {
   name: "",
@@ -176,7 +176,7 @@ export default function AdminSkillsPage() {
             <label className="block text-label-md text-text-secondary mb-1.5">Category</label>
             <select
               value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value as SkillCategory })}
               className="w-full bg-surface-container-lowest border border-border rounded-lg px-3 py-2 text-text focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
             >
               {CATEGORIES.map((cat) => (
