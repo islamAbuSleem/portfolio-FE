@@ -28,7 +28,7 @@ const experienceRemote: RemoteCrud<Experience> = {
   reorder: (items) => reorderExperience(items),
 };
 
-const EMPTY_FORM = { company: "", role: "", startDate: "", endDate: "", description: "" };
+const EMPTY_FORM = { company: "", role: "", startDate: "", endDate: "", current: false, description: "" };
 
 type FormData = typeof EMPTY_FORM;
 
@@ -65,6 +65,7 @@ export default function AdminExperiencePage() {
       role: item.role,
       startDate: item.startDate.split("T")[0],
       endDate: item.endDate?.split("T")[0] || "",
+      current: !item.endDate,
       description: item.description,
     });
     setFormErrors({});
@@ -83,7 +84,7 @@ export default function AdminExperiencePage() {
     const startDateError = Validators.required(data.startDate);
     if (startDateError) errors.startDate = startDateError;
 
-    if (data.startDate && data.endDate && new Date(data.endDate) < new Date(data.startDate)) {
+    if (data.startDate && data.endDate && !data.current && new Date(data.endDate) < new Date(data.startDate)) {
       errors.endDate = "End date must be after start date";
     }
 
@@ -110,7 +111,7 @@ export default function AdminExperiencePage() {
       company: formData.company,
       role: formData.role,
       startDate: formData.startDate,
-      endDate: formData.endDate || undefined,
+      endDate: formData.current ? undefined : formData.endDate || undefined,
       description: formData.description,
     };
 
@@ -240,13 +241,25 @@ export default function AdminExperiencePage() {
               error={formErrors.startDate}
               required
             />
-            <Input
-              label="End Date"
-              type="date"
-              value={formData.endDate}
-              onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-              error={formErrors.endDate}
-            />
+            <div className="flex flex-col">
+              <Input
+                label="End Date"
+                type="date"
+                value={formData.endDate}
+                onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                error={formErrors.endDate}
+                disabled={formData.current}
+              />
+              <label className="flex items-center gap-2 mt-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.current}
+                  onChange={(e) => setFormData({ ...formData, current: e.target.checked })}
+                  className="w-4 h-4 rounded border-border bg-surface-elevated text-primary focus:ring-primary"
+                />
+                <span className="text-sm text-text-secondary">I currently work here</span>
+              </label>
+            </div>
           </div>
           <Textarea
             label="Description"
