@@ -172,7 +172,7 @@ export default function AdminExperiencePage() {
                 </div>
                 <p className="text-primary font-medium mb-1">{item.company}</p>
                 <p className="text-label-md text-text-secondary mb-3">
-                  {new Date(item.startDate).toLocaleDateString("en-US", { year: "numeric", month: "short" })} — {item.endDate ? new Date(item.endDate).toLocaleDateString("en-US", { year: "numeric", month: "short" }) : "Present"}
+                  {new Date(item.startDate).toLocaleDateString("en-US", { year: "numeric", month: "short" })} — {item.endDate ? new Date(item.endDate).toLocaleDateString("en-US", { year: "numeric", month: "short" }) : item.current ? "Current" : "Present"}
                 </p>
                 <p className="text-body-sm text-text-secondary">{item.description}</p>
               </div>
