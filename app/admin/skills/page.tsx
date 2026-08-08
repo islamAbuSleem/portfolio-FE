@@ -9,8 +9,16 @@ import { ConfirmationDialog } from "@/components/ui/ConfirmationDialog";
 import { useToast } from "@/components/ui/Toast";
 import { useCrudResource, RemoteCrud } from "@/hooks/useCrudResource";
 import { Validators } from "@/lib/validation";
-import { Plus, Edit2, Trash2 } from "lucide-react";
-import { Skill, SkillCategory, createSkill, deleteSkill, getSkills, updateSkill } from "@/lib/api";
+import { Plus, Edit2, Trash2, ChevronUp, ChevronDown } from "lucide-react";
+import {
+  Skill,
+  SkillCategory,
+  createSkill,
+  deleteSkill,
+  getSkills,
+  reorderSkills,
+  updateSkill,
+} from "@/lib/api";
 
 const CATEGORIES: SkillCategory[] = ["Frontend", "Backend", "DevOps", "Tools", "Other"];
 
@@ -19,6 +27,7 @@ const skillsRemote: RemoteCrud<Skill> = {
   create: (data) => createSkill(data),
   update: (id, data) => updateSkill(id, data),
   remove: (id) => deleteSkill(id),
+  reorder: (items) => reorderSkills(items),
 };
 
 const EMPTY_FORM = {
@@ -40,6 +49,7 @@ export default function AdminSkillsPage() {
     createItem,
     updateItem,
     deleteItem,
+    moveItem,
   } = useCrudResource<Skill>([], { remote: skillsRemote });
 
   const [formData, setFormData] = useState<FormData>({ ...EMPTY_FORM });
@@ -74,6 +84,15 @@ export default function AdminSkillsPage() {
     if (proficiencyError) errors.proficiency = proficiencyError;
 
     return errors;
+  };
+
+  const handleMove = (skill: Skill, targetIndex: number) => {
+    const fromIndex = skills.findIndex((s) => s.id === skill.id);
+    if (fromIndex < 0) return;
+    moveItem(fromIndex, targetIndex, {
+      onSuccess: () => addToast({ type: "success", title: "Order updated" }),
+      onError: (err) => addToast({ type: "error", title: "Reorder failed", message: err.message }),
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -137,32 +156,53 @@ export default function AdminSkillsPage() {
             <GlassCard key={category} className="p-6">
               <h3 className="text-headline-sm font-semibold text-text mb-4">{category}</h3>
               <div className="space-y-3">
-                {categorySkills.map((skill) => (
-                  <div key={skill.id} className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />
-                      <span className="text-body-sm text-text">{skill.name}</span>
+                {categorySkills.map((skill) => {
+                  const flatIndex = skills.findIndex((s) => s.id === skill.id);
+                  return (
+                    <div key={skill.id} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />
+                        <span className="text-body-sm text-text">{skill.name}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => handleMove(skill, flatIndex - 1)}
+                          disabled={flatIndex <= 0}
+                          className="p-1 rounded hover:bg-surface-elevated text-text-secondary hover:text-primary transition-colors disabled:opacity-30 disabled:pointer-events-none"
+                          aria-label={`Move ${skill.name} up`}
+                        >
+                          <ChevronUp className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleMove(skill, flatIndex + 1)}
+                          disabled={flatIndex >= skills.length - 1}
+                          className="p-1 rounded hover:bg-surface-elevated text-text-secondary hover:text-primary transition-colors disabled:opacity-30 disabled:pointer-events-none"
+                          aria-label={`Move ${skill.name} down`}
+                        >
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => openEdit(skill)}
+                          className="p-1 rounded hover:bg-surface-elevated text-text-secondary hover:text-primary transition-colors"
+                          aria-label={`Edit ${skill.name}`}
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteClick(skill)}
+                          className="p-1 rounded hover:bg-surface-elevated text-text-secondary hover:text-error transition-colors"
+                          aria-label={`Delete ${skill.name}`}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <button
-                        type="button"
-                        onClick={() => openEdit(skill)}
-                        className="p-1 rounded hover:bg-surface-elevated text-text-secondary hover:text-primary transition-colors"
-                        aria-label={`Edit ${skill.name}`}
-                      >
-                        <Edit2 className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteClick(skill)}
-                        className="p-1 rounded hover:bg-surface-elevated text-text-secondary hover:text-error transition-colors"
-                        aria-label={`Delete ${skill.name}`}
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </GlassCard>
           );

@@ -28,11 +28,22 @@ export interface DeleteCallbacks {
   onError?: (error: Error) => void;
 }
 
+export interface ReorderCallbacks {
+  onSuccess?: () => void;
+  onError?: (error: Error) => void;
+}
+
+export interface ReorderItem {
+  id: string;
+  order: number;
+}
+
 export interface RemoteCrud<T extends WithId> {
   list: () => Promise<T[]>;
   create: (data: Omit<T, "id" | "order" | "createdAt" | "updatedAt">) => Promise<T>;
   update: (id: string, data: Partial<T>) => Promise<T>;
   remove: (id: string) => Promise<void>;
+  reorder?: (items: ReorderItem[]) => Promise<void>;
 }
 
 export interface CrudOptions<T extends WithId> {
@@ -242,6 +253,44 @@ export function useCrudResource<T extends WithId>(
     [runWithLoading, deleteItem]
   );
 
+  const moveItem = useCallback(
+    async (fromIndex: number, toIndex: number, callbacks: ReorderCallbacks = {}): Promise<void> => {
+      if (
+        fromIndex < 0 ||
+        toIndex < 0 ||
+        fromIndex >= items.length ||
+        toIndex >= items.length ||
+        fromIndex === toIndex
+      ) {
+        return;
+      }
+
+      const next = [...items];
+      [next[fromIndex], next[toIndex]] = [next[toIndex], next[fromIndex]];
+
+      if (!remote) {
+        previousItemsRef.current = deepClone(items);
+        setItems(next);
+        if (callbacks.onSuccess) callbacks.onSuccess();
+        return;
+      }
+
+      setItems(next);
+      try {
+        await remote.reorder?.(next.map((item, index) => ({ id: item.id, order: index })));
+        if (callbacks.onSuccess) callbacks.onSuccess();
+      } catch (err) {
+        const normalized = normalizeError(err);
+        setErrorState(normalized);
+        if (callbacks.onError) callbacks.onError(normalized);
+        const rows = await remote.list().catch(() => null);
+        if (rows) setItems(rows);
+        throw normalized;
+      }
+    },
+    [remote, items, setErrorState]
+  );
+
   const resetToPreviousState = useCallback(() => {
     if (previousItemsRef.current.length > 0) {
       setItems(deepClone(previousItemsRef.current));
@@ -266,6 +315,7 @@ export function useCrudResource<T extends WithId>(
     createItemWithLoading,
     updateItemWithLoading,
     deleteItemWithLoading,
+    moveItem,
     resetToPreviousState,
     clearError,
   };

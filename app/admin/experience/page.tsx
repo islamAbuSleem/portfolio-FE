@@ -10,12 +10,13 @@ import { ConfirmationDialog } from "@/components/ui/ConfirmationDialog";
 import { useToast } from "@/components/ui/Toast";
 import { useCrudResource, RemoteCrud } from "@/hooks/useCrudResource";
 import { Validators } from "@/lib/validation";
-import { Plus, Edit2, Trash2 } from "lucide-react";
+import { Plus, Edit2, Trash2, ChevronUp, ChevronDown } from "lucide-react";
 import {
   Experience,
   createExperience,
   deleteExperience,
   getExperience,
+  reorderExperience,
   updateExperience,
 } from "@/lib/api";
 
@@ -24,6 +25,7 @@ const experienceRemote: RemoteCrud<Experience> = {
   create: (data) => createExperience(data),
   update: (id, data) => updateExperience(id, data),
   remove: (id) => deleteExperience(id),
+  reorder: (items) => reorderExperience(items),
 };
 
 const EMPTY_FORM = { company: "", role: "", startDate: "", endDate: "", description: "" };
@@ -41,6 +43,7 @@ export default function AdminExperiencePage() {
     createItem,
     updateItem,
     deleteItem,
+    moveItem,
   } = useCrudResource<Experience>([], { remote: experienceRemote });
 
   const [formData, setFormData] = useState<FormData>({ ...EMPTY_FORM });
@@ -84,6 +87,15 @@ export default function AdminExperiencePage() {
     }
 
     return errors;
+  };
+
+    const handleMove = (item: Experience, targetIndex: number) => {
+    const fromIndex = experience.findIndex((e) => e.id === item.id);
+    if (fromIndex < 0) return;
+    moveItem(fromIndex, targetIndex, {
+      onSuccess: () => addToast({ type: "success", title: "Order updated" }),
+      onError: (err) => addToast({ type: "error", title: "Reorder failed", message: err.message }),
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -162,6 +174,24 @@ export default function AdminExperiencePage() {
                 <p className="text-body-sm text-text-secondary">{item.description}</p>
               </div>
               <div className="flex items-center gap-1 ml-4">
+                <button
+                  type="button"
+                  onClick={() => handleMove(item, experience.indexOf(item) - 1)}
+                  disabled={experience.indexOf(item) <= 0}
+                  className="p-1.5 rounded-lg hover:bg-surface-elevated text-text-secondary hover:text-primary transition-colors disabled:opacity-30 disabled:pointer-events-none"
+                  aria-label={`Move ${item.role} at ${item.company} up`}
+                >
+                  <ChevronUp className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleMove(item, experience.indexOf(item) + 1)}
+                  disabled={experience.indexOf(item) >= experience.length - 1}
+                  className="p-1.5 rounded-lg hover:bg-surface-elevated text-text-secondary hover:text-primary transition-colors disabled:opacity-30 disabled:pointer-events-none"
+                  aria-label={`Move ${item.role} at ${item.company} down`}
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </button>
                 <button
                   type="button"
                   onClick={() => openEdit(item)}
