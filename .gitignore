@@ -32,6 +32,13 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# ...but the templates are committed on purpose.
+!.env.example
+!.env.*.example
+
+# Cloudflare local secrets (wrangler / vinext)
+.dev.vars
+.dev.vars.*
 
 # vercel
 .vercel
@@ -39,3 +46,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+/dist/
+.vinext/
+.cloudflare/
