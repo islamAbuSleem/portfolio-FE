@@ -1,6 +1,6 @@
-﻿# Deploying portfolio-FE (Cloudflare Workers)
+# Deploying portfolio-FE (Cloudflare Workers)
 
-Next.js 16 on Cloudflare Workers, using [vinext](https://vinext.dev) â€” the
+Next.js 16 on Cloudflare Workers, using [vinext](https://vinext.dev) ”” the
 official Cloudflare adapter for Next.js.
 
 > The full setup guide (Neon, Render, checklist, troubleshooting, free-tier
@@ -23,7 +23,7 @@ working across `*.workers.dev` â†’ `*.onrender.com`. **Do not set
 
 | Command | What it does |
 |---|---|
-| `npm run dev` | Next.js dev server (unchanged â€” your normal workflow) |
+| `npm run dev` | Next.js dev server (unchanged ”” your normal workflow) |
 | `npm run build` | Next.js production build (unchanged) |
 | `npm run dev:vinext` | Vite-based dev server on port 3001 (matches the Workers runtime) |
 | `npm run build:vinext` | Builds the Cloudflare Workers bundle into `.cloudflare/output` |
@@ -74,7 +74,7 @@ The build log confirms the rewrite was picked up:
 ### Verify
 
 ```bash
-# 1. The rewrite is wired up â€” the build log prints this:
+# 1. The rewrite is wired up ”” the build log prints this:
 #    [vinext] Found 1 external rewrite that proxy requests to external origins:
 #      /api/:path* â†’ https://portfolio-usca.onrender.com/:path*
 #

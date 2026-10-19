@@ -1,17 +1,23 @@
 /**
  * The canonical public origin of the portfolio.
  *
- * This is the "main link" of the site: it is what appears in canonical
- * tags, Open Graph URLs, and the project card that links to the portfolio
- * itself. Point the domain at a Worker and it is served from there.
+ * This is the "main link" of the site: it appears in the canonical tag, the
+ * Open Graph URL and the project card that links to the portfolio itself.
  *
- * The deployment currently also answers on the generated
- * `https://portfolio-fe.islamabusleem.workers.dev` hostname, which is kept
- * as a fallback until the custom domain is registered and resolvable.
+ * `islamabusleem.eu.org` is a free permanent subdomain from EU.org (free
+ * since 1996). The Cloudflare zone for it and the Worker custom domain are
+ * already set up, so it starts serving as soon as EU.org approves the
+ * request and delegates the nameservers to Cloudflare.
+ *
+ * To switch to a paid domain instead, change this one line (and the
+ * matching FRONTEND_URL on Render).
  */
-export const SITE_URL = "https://islamabusleem.dev";
+export const SITE_URL = "https://islamabusleem.eu.org";
 
-/** The generated fallback hostname, used until the custom domain is live. */
+/**
+ * The generated fallback hostname. The Worker always answers here too, so
+ * the site is reachable even before the custom domain is delegated.
+ */
 export const FALLBACK_SITE_URL = "https://portfolio-fe.islamabusleem.workers.dev";
 
 /** Absolute URL for a path on the portfolio. */
