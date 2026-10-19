@@ -16,7 +16,7 @@ Next.js App Router on Vite and emits a standard Workers bundle.
 
 `next.config.ts` rewrites `/api/*` to the API origin. The browser then only
 ever calls its own origin, which is what keeps the `SameSite=Lax` auth cookie
-working across `*.workers.dev` â†’ `*.onrender.com`. **Do not set
+working across `*.workers.dev` → `*.onrender.com`. **Do not set
 `NEXT_PUBLIC_API_URL` in production.**
 
 ## Commands
@@ -34,15 +34,15 @@ working across `*.workers.dev` â†’ `*.onrender.com`. **Do not set
 
 ## Deploying
 
-1. **Cloudflare dashboard â†’ Workers & Pages â†’ Create â†’ Import a project**,
+1. **Cloudflare dashboard → Workers & Pages → Create → Import a project**,
    connect `islamAbuSleem/portfolio-FE`.
 2. Build settings:
    - Build command: `npm run build:vinext`
    - Build output directory: *(leave empty)*
    - Node version: `22`
-3. **Settings â†’ Variables and Secrets â†’ Add**:
+3. **Settings → Variables and Secrets → Add**:
    - `API_URL` = `https://portfolio-usca.onrender.com`
-     â†’ **mark it as a build variable** (the rewrite destination is resolved
+     → **mark it as a build variable** (the rewrite destination is resolved
      at build time)
    - `NODE_ENV` = `production`
 4. Save and deploy.
@@ -76,7 +76,7 @@ The build log confirms the rewrite was picked up:
 ```bash
 # 1. The rewrite is wired up — the build log prints this:
 #    [vinext] Found 1 external rewrite that proxy requests to external origins:
-#      /api/:path* â†’ https://portfolio-usca.onrender.com/:path*
+#      /api/:path* → https://portfolio-usca.onrender.com/:path*
 #
 # 2. The proxy works:
 curl -i https://portfolio-fe.islamabusleem.workers.dev/api/projects
