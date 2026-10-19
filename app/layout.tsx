@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/hooks/useTheme";
 import { ToastProvider } from "@/components/ui/Toast";
+import { SITE_URL } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,8 +16,28 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  // The custom domain is the canonical origin of the site.
+  metadataBase: new URL(SITE_URL),
   title: "Kinetic Syntax — Full-Stack Developer Portfolio",
-  description: "Senior Full-Stack Engineer specializing in high-performance distributed systems and immersive frontend architectures.",
+  description:
+    "Senior Full-Stack Engineer specializing in high-performance distributed systems and immersive frontend architectures.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "Kinetic Syntax",
+    title: "Kinetic Syntax — Full-Stack Developer Portfolio",
+    description:
+      "Senior Full-Stack Engineer specializing in high-performance distributed systems and immersive frontend architectures.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kinetic Syntax — Full-Stack Developer Portfolio",
+    description:
+      "Senior Full-Stack Engineer specializing in high-performance distributed systems and immersive frontend architectures.",
+  },
 };
 
 // Runs before React hydrates to prevent flash-of-wrong-theme. Duplicates the

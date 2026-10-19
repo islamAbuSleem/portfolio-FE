@@ -32,15 +32,18 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Type check
-        run: npx tsc --noEmit
-
+      # `next build` runs the TypeScript check itself and regenerates
+      # .next/types, so it must run before the standalone `tsc --noEmit`
+      # below -- otherwise that step reads stale generated types.
       - name: Build (Next.js)
         run: npm run build
         env:
           # The rewrite destination is resolved at build time. A placeholder is
           # enough for CI: the build only has to compile, it never calls the API.
           API_URL: https://api.example.invalid
+
+      - name: Type check
+        run: npx tsc --noEmit
 
       - name: vinext compatibility check
         run: npm run check:vinext

@@ -26,7 +26,8 @@
  * broken "Live Demo" link.
  */
 export const PROJECT_LIVE_URLS = {
-  portfolio: "https://portfolio-fe.islamabusleem.workers.dev",
+  // The portfolio's own main link is the custom domain.
+  portfolio: "https://islamabusleem.dev",
   productSearch: "",
   jobPilot: "",
   booking: "",
