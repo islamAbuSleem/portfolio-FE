@@ -32,23 +32,25 @@ function useIsMounted() {
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const mounted = useIsMounted();
   const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window === "undefined") return "light";
+    // Dark is the designed default; the system preference no longer decides.
+    if (typeof window === "undefined") return "dark";
     const stored = localStorage.getItem("theme") as Theme | null;
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    return stored ?? (prefersDark ? "dark" : "light");
+    return stored ?? "dark";
   });
 
-  const toggleTheme = () => {
-    const next = theme === "light" ? "dark" : "light";
+  const applyTheme = (next: Theme) => {
     setThemeState(next);
     localStorage.setItem("theme", next);
     document.documentElement.classList.toggle("dark", next === "dark");
+    document.documentElement.style.colorScheme = next;
+  };
+
+  const toggleTheme = () => {
+    applyTheme(theme === "light" ? "dark" : "light");
   };
 
   const setTheme = (next: Theme) => {
-    setThemeState(next);
-    localStorage.setItem("theme", next);
-    document.documentElement.classList.toggle("dark", next === "dark");
+    applyTheme(next);
   };
 
   return (

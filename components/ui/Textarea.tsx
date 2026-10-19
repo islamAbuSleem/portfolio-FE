@@ -11,27 +11,32 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ label, error, helperText, rows = 4, className = "", ...props }, ref) => {
-    const errorClasses = error ? "border-error focus:ring-error/20" : "border-border focus:ring-primary/20";
-    const helperClasses = helperText ? "block text-label-sm text-text-secondary mt-1.5" : "";
-
     return (
-      <div className={`space-y-1.5 ${className}`}>
+      <div className={`space-y-2 ${className}`}>
         {label && (
-          <label htmlFor={props.id} className="block text-label-md text-text-secondary">
+          <label htmlFor={props.id} className="block text-label-xs text-text-faint">
             {label}
-            {(props.required || props["aria-required"] === "true") && <span className="text-error ml-1">*</span>}
+            {(props.required || props["aria-required"] === "true") && (
+              <span className="text-error ml-1">*</span>
+            )}
           </label>
         )}
         <textarea
           ref={ref}
-          className={`w-full bg-surface-container-lowest border rounded-lg px-3 py-2 text-text ${errorClasses} focus:outline-none focus:ring-2 transition-all ${
-            props.disabled ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          className={`w-full bg-surface border border-border rounded-sm px-3 py-3 text-text placeholder:text-text-faint focus:border-primary transition-colors duration-200 resize-y ${
+            error ? "border-error focus:border-error" : ""
+          } ${props.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
           rows={rows}
           {...props}
         />
-        {helperText && <p className={helperClasses}>{helperText}</p>}
-        {error && <p className="text-error text-sm">{error}</p>}
+        {helperText && (
+          <p className="text-label-md text-text-faint">{helperText}</p>
+        )}
+        {error && (
+          <p className="text-label-md text-error" role="alert">
+            {error}
+          </p>
+        )}
       </div>
     );
   }

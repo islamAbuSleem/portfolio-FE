@@ -1,120 +1,72 @@
-"use client";
+﻿"use client";
 
-import { useInView } from "@/hooks/useInView";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { Experience } from "@/lib/api";
 import { formatPeriod } from "@/lib/utils";
 
-function TimelineDot({ inView }: { inView: boolean }) {
-  return (
-    <div className="relative flex-shrink-0 w-4 h-4">
-      {inView && (
-        <>
-          <span className="absolute inset-0 rounded-full bg-primary/40 animate-[ring-expand_1s_ease-out_infinite]" />
-          <span className="absolute inset-0 rounded-full bg-primary/30 animate-[ring-expand_1s_ease-out_0.3s_infinite]" />
-        </>
-      )}
-      <span
-        className={`absolute inset-0 rounded-full bg-primary border-2 border-bg ${
-          inView ? "animate-pulse" : ""
-        }`}
-      />
-    </div>
-  );
-}
-
+/**
+ * Roles as a ledger: the period in tabular figures on the left, the role
+ * and what was shipped on the right. No timeline spine, no pulsing markers â€”
+ * a reader scanning for "what did they do, and when" gets it in one pass.
+ */
 export function ExperienceSection({ experiences }: { experiences: Experience[] }) {
   return (
-    <section className="relative py-24 px-6">
-      <div className="max-w-6xl mx-auto">
+    <section id="experience" data-accent="mint" className="relative scroll-mt-24">
+      <div className="shell">
         <ScrollReveal>
-          <h2 className="text-headline-md md:text-headline-lg font-semibold text-text mb-4 text-center">
-            Experience
-          </h2>
-          <p className="text-body-md text-text-secondary mb-16">
-            A timeline of roles where I shipped work and grew as an engineer.
-          </p>
+          <div className="rule section-rule pt-16 md:pt-24 pb-10 grid grid-cols-1 lg:grid-cols-12 gap-x-10">
+            <div className="lg:col-span-3">
+              <p className="text-label-xs section-index">04</p>
+              <h2 className="mt-3 text-headline-lg text-text">Experience</h2>
+              <p className="mt-4 text-body-sm text-text-secondary measure-tight">
+                Roles where I shipped work and grew as an engineer.
+              </p>
+            </div>
+          </div>
         </ScrollReveal>
 
         {experiences.length === 0 ? (
-          <div className="glass rounded-2xl p-10 text-center">
+          <div className="rule py-10">
             <p className="text-body-md text-text-secondary">
-              Work history is being updated — check back soon.
+              Work history is being updated â€” check back soon.
             </p>
           </div>
         ) : (
-          <div className="relative">
-            <div
-              className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary via-primary/50 to-secondary"
-              aria-hidden="true"
-            />
+          experiences.map((experience, index) => (
+            <ScrollReveal key={experience.id} delay={index * 60}>
+              <article className="rule grid grid-cols-1 lg:grid-cols-12 gap-x-10 gap-y-3 py-7">
+                <div className="lg:col-span-3">
+                  <p className="text-label-md text-text-secondary tnum">
+                    {formatPeriod(
+                      experience.startDate,
+                      experience.endDate,
+                      experience.current,
+                    )}
+                  </p>
+                  {experience.current && (
+                    <p className="mt-1.5 text-label-xs text-tertiary">
+                      Current
+                    </p>
+                  )}
+                </div>
 
-            <div className="flex flex-col gap-12">
-              {experiences.map((exp, index) => {
-                const isEven = index % 2 === 0;
-                return (
-                  <ExperienceItem key={exp.id} experience={exp} isEven={isEven} />
-                );
-              })}
-            </div>
-          </div>
+                <div className="lg:col-span-4">
+                  <h3 className="text-headline-sm text-text">
+                    {experience.role}
+                  </h3>
+                  <p className="mt-1 text-body-sm text-primary">
+                    {experience.company}
+                  </p>
+                </div>
+
+                <p className="lg:col-span-5 text-body-sm text-text-secondary measure">
+                  {experience.description}
+                </p>
+              </article>
+            </ScrollReveal>
+          ))
         )}
       </div>
     </section>
-  );
-}
-
-function ExperienceItem({
-  experience,
-  isEven,
-}: {
-  experience: Experience;
-  isEven: boolean;
-}) {
-  const { ref, inView } = useInView({ threshold: 0.2 });
-
-  return (
-    <div
-      ref={ref}
-      className={`relative flex items-start gap-6 md:gap-0 ${
-        isEven ? "md:flex-row" : "md:flex-row-reverse"
-      }`}
-      style={{
-        opacity: inView ? 1 : 0,
-        transform: inView
-          ? "translateX(0)"
-          : isEven
-            ? "translateX(-20px)"
-            : "translateX(20px)",
-        transition: "opacity 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1)",
-      }}
-    >
-      <div className="absolute left-6 md:left-1/2 -translate-x-1/2 z-10">
-        <TimelineDot inView={inView} />
-      </div>
-
-      <div className={`flex-1 ml-14 md:ml-0 ${isEven ? "md:pr-16 md:text-right" : "md:pl-16"}`}>
-        <div className="glass rounded-2xl p-6 transition-all duration-300 hover:border-primary/30">
-          <div className="flex flex-col gap-1">
-            <h3 className="text-headline-sm font-semibold text-text">
-              {experience.role}
-              {experience.current || !experience.endDate ? (
-                <span
-                  className="inline-block ml-2 px-2 py-0.5 rounded-full bg-primary text-on-primary text-label-sm font-medium"
-                  style={{ animation: "now-badge-pulse 2s ease-in-out infinite" }}
-                >
-                  NOW
-                </span>
-              ) : null}
-            </h3>
-            <p className="text-primary font-medium">{experience.company}</p>
-            <p className="text-label-md text-text-secondary mb-3">
-              {formatPeriod(experience.startDate, experience.endDate, experience.current)}
-            </p>
-            <p className="text-body-sm text-text-secondary">{experience.description}</p>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 }

@@ -1,95 +1,118 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/Button";
-import { ChevronDown } from "lucide-react";
-import { useParallax } from "@/hooks/useParallax";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import { Project } from "@/lib/api";
 
-const PHRASES = ["diverse systems", "innovative interfaces", "meaningful experiences"];
-
-export function Hero() {
-  const [phraseIndex, setPhraseIndex] = useState(0);
-  const [visible, setVisible] = useState(true);
-  const bgRef = useParallax(0.1);
-  const contentRef = useParallax(0.25);
-  const fgRef = useParallax(0.4);
-
-  useEffect(() => {
-    let innerTimeout: ReturnType<typeof setTimeout>;
-    const interval = setInterval(() => {
-      setVisible(false);
-      innerTimeout = setTimeout(() => {
-        setPhraseIndex((i) => (i + 1) % PHRASES.length);
-        setVisible(true);
-      }, 500);
-    }, 3000);
-    return () => {
-      clearInterval(interval);
-      clearTimeout(innerTimeout);
-    };
-  }, []);
+/**
+ * The first viewport is a thesis, not a header: who this is, what they do,
+ * and - immediately - the index of the work.
+ *
+ * One accent does all the talking. The name is set in it, the index of the
+ * work sits on a solid field of it, and everything between is quiet.
+ */
+export function Hero({ projects }: { projects: Project[] }) {
+  const listed = projects.slice(0, 5);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <div
-        ref={bgRef}
-        className="absolute inset-0 bg-gradient-to-br from-bg via-surface to-bg will-change-transform"
-        aria-hidden="true"
-      />
-      <div
-        className="noise absolute inset-0 z-0"
-        aria-hidden="true"
-      />
+    <section className="relative pt-28 md:pt-36 pb-0">
+      <div className="shell">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-x-10 gap-y-12">
+          {/* Name and statement */}
+          <div className="lg:col-span-7">
+            <h1 className="text-display-xl display-expanded text-text">
+              Islam
+              <br />
+              <span className="text-primary">Abusleem</span>
+            </h1>
 
-      <div
-        ref={contentRef}
-        className="relative z-10 text-center px-6 max-w-4xl mx-auto will-change-transform"
-      >
-        <div className="relative inline-block mb-8">
-          <h1 className="text-display-lg-mobile md:text-display-xl font-extrabold text-text leading-tight tracking-tight">
-            I build{" "}
-            <span className="text-gradient-primary">diverse</span>{" "}
-            <span className="text-gradient-secondary">systems</span>
-            <br />
-            and{" "}
-            <span className="text-gradient-secondary">innovative</span>{" "}
-            <span className="text-gradient-primary">interfaces</span>
-          </h1>
-          <div
-            className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-3/4 h-8 bg-primary/20 blur-3xl rounded-full"
-            style={{ animation: "headline-glow 3s ease-in-out infinite" }}
-            aria-hidden="true"
-          />
+            <p className="mt-8 text-body-lg text-text-secondary measure">
+              Senior full-stack engineer. I build distributed systems, backend
+              services and interfaces that hold up in production - and I ship
+              them, not just design them.
+            </p>
+
+            <div className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-3">
+              <Link
+                href="#projects"
+                className="group inline-flex items-center gap-2.5 bg-primary text-on-primary px-6 py-3 text-body-md font-medium transition-colors duration-200 hover:bg-primary-dim"
+              >
+                View the work
+                <ArrowUpRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </Link>
+              <Link
+                href="#contact"
+                className="inline-flex items-center gap-2.5 border border-border px-6 py-3 text-body-md text-text transition-colors duration-200 hover:border-primary hover:text-primary"
+              >
+                Get in touch
+              </Link>
+            </div>
+          </div>
+
+          {/* Facts, kept quiet so the accent stays loud */}
+          <dl className="lg:col-span-4 lg:col-start-9 self-end border-t border-border">
+            <div className="py-4 grid grid-cols-3 gap-4 border-b border-border">
+              <dt className="text-label-xs text-text-faint">Focus</dt>
+              <dd className="col-span-2 text-body-sm text-text-secondary">
+                Backend services, distributed systems, interface architecture
+              </dd>
+            </div>
+            <div className="py-4 grid grid-cols-3 gap-4 border-b border-border">
+              <dt className="text-label-xs text-text-faint">Stack</dt>
+              <dd className="col-span-2 text-body-sm text-text-secondary">
+                Next.js, NestJS, PostgreSQL, TypeScript
+              </dd>
+            </div>
+            <div className="py-4 grid grid-cols-3 gap-4">
+              <dt className="text-label-xs text-text-faint">Based</dt>
+              <dd className="col-span-2 text-body-sm text-text-secondary">
+                Saudi Arabia (GMT+3) - open to remote, worldwide
+              </dd>
+            </div>
+          </dl>
         </div>
 
-        <p className="text-body-lg text-text-secondary mb-10">
-          Specializing in{" "}
-          <span
-            className={`inline-block transition-opacity duration-500 ${
-              visible ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            {PHRASES[phraseIndex]}
-          </span>
-        </p>
-
-        <div className="flex items-center justify-center gap-4">
-          <Button variant="primary" size="lg" className="animate-glow">
-            View Projects
-          </Button>
-          <Button variant="ghost" size="lg">
-            Contact Me
-          </Button>
-        </div>
-      </div>
-
-      <div
-        ref={fgRef}
-        className="absolute bottom-8 left-1/2 flex flex-col items-center gap-2 will-change-transform"
-        style={{ transform: "translateX(-50%)" }}
-      >
-        <span className="text-label-md text-text-secondary tracking-widest">SCROLL</span>
-        <ChevronDown className="w-5 h-5 text-text-secondary animate-bounce" />
+        {/* The index of the work, on the one solid field of the accent. */}
+        {listed.length > 0 && (
+          <div className="mt-16 md:mt-24 field-primary">
+            <div className="flex items-baseline justify-between px-6 md:px-8 py-4">
+              <p className="text-label-xs opacity-75">Index</p>
+              <p className="text-label-xs opacity-75 tnum">
+                {projects.length.toString().padStart(2, "0")} projects
+              </p>
+            </div>
+            <ul>
+              {listed.map((project, index) => {
+                const href = project.liveUrl ?? project.githubUrl ?? "#";
+                const isLive = Boolean(project.liveUrl);
+                return (
+                  <li key={project.id}>
+                    <a
+                      href={href}
+                      target={isLive ? "_blank" : undefined}
+                      rel={isLive ? "noopener noreferrer" : undefined}
+                      className="group grid grid-cols-[2.5rem_1fr_auto] md:grid-cols-[3rem_1fr_14rem_6rem] items-baseline gap-x-4 px-6 md:px-8 py-5 border-t border-current/20 transition-colors duration-200 hover:bg-black/10"
+                    >
+                      <span className="text-label-xs opacity-60 tnum">
+                        {(index + 1).toString().padStart(2, "0")}
+                      </span>
+                      <span className="text-headline-md">
+                        {project.title}
+                      </span>
+                      <span className="hidden md:block text-label-md opacity-70 truncate">
+                        {project.techs.slice(0, 3).join(" · ")}
+                      </span>
+                      <span className="flex items-center gap-1.5 text-label-md">
+                        {isLive ? "live" : "source"}
+                        <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      </span>
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
       </div>
     </section>
   );

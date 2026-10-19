@@ -17,31 +17,40 @@ export default async function Home() {
     getProjects().catch(() => []),
   ]);
 
+  const allProjects = mergeProjects(projects);
+
   return (
     <>
       <PortfolioNavbar />
       <main className="flex-1">
-        <Hero />
+        <Hero projects={allProjects} />
+        <FeaturedProjects projects={allProjects} />
         <AboutSection
           title="About Me"
-          description={about?.bio ?? "Add your story from the admin panel."}
+          description={
+            about?.bio ??
+            "Full-stack developer passionate about building beautiful, performant web applications. Experienced with React, Next.js, Vue, Nuxt, Node.js, NestJS, Java, Spring Boot, and modern cloud infrastructure."
+          }
           avatar={
             about?.avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={about.avatarUrl} alt="Profile" className="w-full h-full object-cover" />
+              <img
+                src={about.avatarUrl}
+                alt="Islam Abusleem"
+                className="w-full aspect-square object-cover border border-border"
+              />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                <span className="text-6xl">👨‍💻</span>
+              <div className="w-full aspect-square grid place-items-center border border-border bg-surface-elevated">
+                <span className="text-display-lg-mobile text-text-faint">IA</span>
               </div>
             )
           }
         />
         <SkillsSection skills={skills} />
         <ExperienceSection experiences={experience} />
-        <FeaturedProjects projects={mergeProjects(projects)} />
         <ContactSection />
-        <Footer />
       </main>
+      <Footer />
     </>
   );
 }

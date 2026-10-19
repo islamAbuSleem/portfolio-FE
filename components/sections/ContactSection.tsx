@@ -1,21 +1,16 @@
-"use client";
+﻿"use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { GithubIcon, LinkedinIcon } from "@/components/icons/SocialIcons";
 import { isValidEmail } from "@/lib/validation";
-import { Mail, MapPin } from "lucide-react";
 
-function CheckIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-12 h-12">
-      <path d="M20 6L9 17l-5-5" />
-    </svg>
-  );
-}
+const EMAIL = "islam.abusleem@gmail.com";
+const GITHUB_URL = "https://github.com/islamAbuSleem";
+const LINKEDIN_URL = "https://www.linkedin.com/in/islamabusleem";
 
 export function ContactSection() {
   const [formState, setFormState] = useState({
@@ -23,102 +18,73 @@ export function ContactSection() {
     email: "",
     message: "",
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [sent, setSent] = useState(false);
   const [errors, setErrors] = useState<{ name?: string; email?: string; message?: string }>({});
-  const [sparkles, setSparkles] = useState<{ id: number; x: number; y: number; tx: number; ty: number }[]>([]);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const sparkleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (sparkleTimerRef.current) clearTimeout(sparkleTimerRef.current);
-    };
-  }, []);
 
   const validate = () => {
-    const newErrors: { name?: string; email?: string; message?: string } = {};
-    if (!formState.name.trim()) newErrors.name = "Name is required";
-    if (!formState.email.trim()) newErrors.email = "Email is required";
-    else if (!isValidEmail(formState.email)) newErrors.email = "Invalid email";
-    if (!formState.message.trim()) newErrors.message = "Message is required";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    const next: { name?: string; email?: string; message?: string } = {};
+    if (!formState.name.trim()) next.name = "Name is required";
+    if (!formState.email.trim()) next.email = "Email is required";
+    else if (!isValidEmail(formState.email)) next.email = "That email does not look right";
+    if (!formState.message.trim()) next.message = "Message is required";
+    setErrors(next);
+    return Object.keys(next).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
-    setIsSubmitting(true);
-    await new Promise((r) => setTimeout(r, 1500));
-
-    if (buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-    const newSparkles = Array.from({ length: 12 }).map((_, i) => {
-      const angle = (i / 12) * Math.PI * 2;
-      const distance = 30 + Math.random() * 20;
-      return {
-        id: i,
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2,
-        tx: Math.cos(angle) * distance,
-        ty: Math.sin(angle) * distance,
-      };
-    });
-    setSparkles(newSparkles);
-    sparkleTimerRef.current = setTimeout(() => setSparkles([]), 800);
-    }
-
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-  };
-
-  const resetForm = () => {
-    setIsSubmitted(false);
-    setFormState({ name: "", email: "", message: "" });
-    setErrors({});
+    const subject = `Portfolio enquiry from ${formState.name.trim()}`;
+    const body = `${formState.message.trim()}\n\nâ€” ${formState.name.trim()}\n${formState.email.trim()}`;
+    window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    setSent(true);
   };
 
   return (
-    <section className="relative py-24 px-6 overflow-hidden">
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" aria-hidden="true">
-        <div className="w-full h-full" style={{
-          backgroundImage: `
-            linear-gradient(to right, var(--primary) 1px, transparent 1px),
-            linear-gradient(to bottom, var(--primary) 1px, transparent 1px)
-          `,
-          backgroundSize: "60px 60px",
-        }} />
-      </div>
-
-      <div className="relative z-10 max-w-6xl mx-auto">
+    <section id="contact" data-accent="mint" className="relative scroll-mt-24">
+      <div className="shell">
         <ScrollReveal>
-          <h2 className="text-headline-md md:text-headline-lg font-semibold text-text mb-4 text-center">
-            Get in Touch
-          </h2>
-        <p className="text-body-md text-text-secondary mb-16">
-          Have a project in mind or want to discuss an opportunity? I&apos;d love to hear from you.
-        </p>
+          <div className="rule section-rule pt-16 md:pt-24 pb-10 grid grid-cols-1 lg:grid-cols-12 gap-x-10">
+            <div className="lg:col-span-3">
+              <p className="text-label-xs section-index">05</p>
+              <h2 className="mt-3 text-headline-lg text-text">Get in touch</h2>
+              <p className="mt-4 text-body-sm text-text-secondary measure-tight">
+                A project in mind, or an opportunity to discuss? Send a
+                message and I&apos;ll reply personally.
+              </p>
+            </div>
+          </div>
         </ScrollReveal>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          <ScrollReveal>
-            {isSubmitted ? (
-              <div className="glass rounded-2xl p-8 flex flex-col items-center justify-center text-center min-h-[400px] animate-in">
-                <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mb-6">
-                  <CheckIcon />
-                </div>
-                <h3 className="text-headline-md font-semibold text-text mb-2">Message sent</h3>
-                <p className="text-body-md text-text-secondary mb-6 max-w-sm">
-                  Thanks for reaching out. I review every message personally and will get back to you within 24 hours.
+        <div className="rule grid grid-cols-1 lg:grid-cols-12 gap-x-10 gap-y-12 py-10">
+          <div className="lg:col-span-7">
+            {sent ? (
+              <div className="max-w-lg">
+                <p className="text-headline-md text-text">Your mail app should be open.</p>
+                <p className="mt-3 text-body-md text-text-secondary measure">
+                  If nothing happened, write to{" "}
+                  <a
+                    href={`mailto:${EMAIL}`}
+                    className="text-primary underline underline-offset-4"
+                  >
+                    {EMAIL}
+                  </a>{" "}
+                  directly.
                 </p>
-                <Button variant="ghost" onClick={resetForm} className="gap-2">
-                  Send another message
+                <Button
+                  variant="ghost"
+                  className="mt-8"
+                  onClick={() => {
+                    setSent(false);
+                    setFormState({ name: "", email: "", message: "" });
+                  }}
+                >
+                  Write another
                 </Button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="glass rounded-2xl p-8 space-y-6">
+              <form onSubmit={handleSubmit} noValidate className="max-w-lg space-y-6">
                 <Input
                   label="Name"
                   value={formState.name}
@@ -138,81 +104,57 @@ export function ContactSection() {
                   label="Message"
                   value={formState.message}
                   onChange={(e) => setFormState({ ...formState, message: e.target.value })}
-                  rows={5}
+                  rows={6}
                   error={errors.message}
+                  placeholder="What are you building?"
                 />
-
-                <div className="relative">
-                  <Button
-                    ref={buttonRef}
-                    type="submit"
-                    variant="primary"
-                    size="lg"
-                    className="w-full"
-                    isLoading={isSubmitting}
-                  >
-                    Send Message
-                  </Button>
-
-                  {sparkles.map((s) => (
-                    <span
-                      key={s.id}
-                      className="fixed w-1.5 h-1.5 rounded-full bg-primary pointer-events-none z-50"
-                      style={{
-                        left: s.x,
-                        top: s.y,
-                        "--tx": `${s.tx}px`,
-                        "--ty": `${s.ty}px`,
-                        animation: "sparkle 0.6s ease-out forwards",
-                      } as React.CSSProperties}
-                    />
-                  ))}
-                </div>
+                <Button type="submit" variant="primary" size="lg" className="mt-2">
+                  Send message
+                </Button>
               </form>
             )}
-          </ScrollReveal>
+          </div>
 
-          <ScrollReveal delay={200}>
-            <div className="glass rounded-2xl p-8 flex flex-col justify-between h-full">
-              <div>
-                <h3 className="text-headline-sm font-semibold text-text mb-6">Contact Info</h3>
-                <div className="flex flex-col gap-5">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Mail className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-label-md text-text-secondary">Email</p>
-                      <p className="text-body-sm text-text">hello@kineticsyntax.dev</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <MapPin className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-label-md text-text-secondary">Location</p>
-                      <p className="text-body-sm text-text">Remote — Worldwide</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-8 pt-6 border-t border-border/50">
-                <h3 className="text-headline-sm font-semibold text-text mb-4">Connect</h3>
-                <div className="flex flex-col gap-3">
-                  <a href="#" className="flex items-center gap-3 text-text-secondary hover:text-primary transition-colors group">
-                    <GithubIcon />
-                    <span className="text-body-sm group-hover:text-text transition-colors">github.com/kineticsyntax</span>
-                  </a>
-                  <a href="#" className="flex items-center gap-3 text-text-secondary hover:text-primary transition-colors group">
-                    <LinkedinIcon />
-                    <span className="text-body-sm group-hover:text-text transition-colors">linkedin.com/in/kineticsyntax</span>
-                  </a>
-                </div>
-              </div>
+          <dl className="lg:col-span-4 lg:col-start-9">
+            <div className="rule pt-5 pb-5">
+              <dt className="text-label-xs text-text-faint">Email</dt>
+              <dd className="mt-2">
+                <a
+                  href={`mailto:${EMAIL}`}
+                  className="text-body-md text-text hover:text-primary transition-colors duration-200 break-all"
+                >
+                  {EMAIL}
+                </a>
+              </dd>
             </div>
-          </ScrollReveal>
+            <div className="rule pt-5 pb-5">
+              <dt className="text-label-xs text-text-faint">Location</dt>
+              <dd className="mt-2 text-body-md text-text">Remote â€” worldwide</dd>
+            </div>
+            <div className="rule pt-5 pb-5">
+              <dt className="text-label-xs text-text-faint">Elsewhere</dt>
+              <dd className="mt-3 flex flex-col gap-3">
+                <a
+                  href={GITHUB_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-3 text-body-sm text-text-secondary hover:text-primary transition-colors duration-200"
+                >
+                  <GithubIcon className="w-4 h-4 shrink-0" />
+                  <span>github.com/islamAbuSleem</span>
+                </a>
+                <a
+                  href={LINKEDIN_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-3 text-body-sm text-text-secondary hover:text-primary transition-colors duration-200"
+                >
+                  <LinkedinIcon className="w-4 h-4 shrink-0" />
+                  <span>linkedin.com/in/islamabusleem</span>
+                </a>
+              </dd>
+            </div>
+          </dl>
         </div>
       </div>
     </section>

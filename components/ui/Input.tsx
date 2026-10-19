@@ -18,12 +18,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div className="w-full">
-        <label htmlFor={id} className="block text-label-md text-text-secondary mb-1.5">
+        <label htmlFor={id} className="block text-label-xs text-text-faint mb-2">
           {label}
         </label>
         <div className="relative">
           {icon && (
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 text-text-secondary/60 pointer-events-none" aria-hidden="true">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-text-faint pointer-events-none" aria-hidden="true">
               {icon}
             </div>
           )}
@@ -32,17 +32,17 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             id={id}
             aria-invalid={error ? "true" : "false"}
             aria-describedby={`${error ? errorId : ""} ${hint ? hintId : ""}`.trim() || undefined}
-            className={`w-full bg-surface-container-lowest border-0 border-b border-border text-text placeholder:text-text-secondary/50 focus:border-primary focus:outline-none focus:ring-0 transition-colors py-3 px-0 rounded-t-lg ${error ? "border-error" : ""} ${icon ? "pl-10" : ""} ${className}`}
+            className={`w-full bg-surface border border-border text-text placeholder:text-text-faint focus:border-primary transition-colors duration-200 py-3 px-3 rounded-sm ${error ? "border-error focus:border-error" : ""} ${icon ? "pl-10" : ""} ${className}`}
             {...props}
           />
         </div>
         {error && (
-          <p id={errorId} className="mt-1.5 text-sm text-error" role="alert">
+          <p id={errorId} className="mt-2 text-label-md text-error" role="alert">
             {error}
           </p>
         )}
         {hint && !error && (
-          <p id={hintId} className="mt-1.5 text-sm text-text-secondary">
+          <p id={hintId} className="mt-2 text-label-md text-text-faint">
             {hint}
           </p>
         )}
