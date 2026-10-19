@@ -26,8 +26,8 @@
  * broken "Live Demo" link.
  */
 export const PROJECT_LIVE_URLS = {
-  // The portfolio's own main link is the canonical domain.
-  portfolio: "https://islamabusleem.eu.org",
+  // The portfolio's own main link is its canonical origin.
+  portfolio: "https://portfolio-fe.islamabusleem.workers.dev",
   productSearch: "",
   jobPilot: "",
   booking: "",
