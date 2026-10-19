@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { TagPill } from "@/components/ui/TagPill";
 import { getProjects } from "@/lib/api";
+import { mergeProjects } from "@/lib/projects";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +11,7 @@ export default async function ProjectsPage({
   searchParams: Promise<{ skill?: string }>;
 }) {
   const { skill } = await searchParams;
-  const projects = await getProjects().catch(() => []);
+  const projects = mergeProjects(await getProjects().catch(() => []));
 
   const selectedSkill = skill;
   const filtered = selectedSkill

@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Cancel superseded runs on the same branch.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build (Next.js + vinext)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Build (Next.js)
+        run: npm run build
+        env:
+          # The rewrite destination is resolved at build time. A placeholder is
+          # enough for CI: the build only has to compile, it never calls the API.
+          API_URL: https://api.example.invalid
+
+      - name: vinext compatibility check
+        run: npm run check:vinext
+
+      - name: Build (Cloudflare Workers)
+        run: npm run build:vinext
+        env:
+          API_URL: https://api.example.invalid

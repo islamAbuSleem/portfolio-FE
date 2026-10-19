@@ -22,7 +22,8 @@ export interface Experience {
   company: string;
   role: string;
   startDate: string;
-  endDate?: string;
+  endDate?: string | null;
+  current: boolean;
   description: string;
   order: number;
   createdAt: string;
@@ -63,7 +64,8 @@ export interface CreateExperienceInput {
   company: string;
   role: string;
   startDate: string;
-  endDate?: string;
+  endDate?: string | null;
+  current?: boolean;
   description: string;
 }
 

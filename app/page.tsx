@@ -7,6 +7,7 @@ import { ContactSection } from "@/components/sections/ContactSection";
 import { Footer } from "@/components/sections/Footer";
 import { PortfolioNavbar } from "@/components/portfolio/PortfolioNavbar";
 import { getAbout, getExperience, getProjects, getSkills } from "@/lib/api";
+import { mergeProjects } from "@/lib/projects";
 
 export default async function Home() {
   const [about, skills, experience, projects] = await Promise.all([
@@ -37,7 +38,7 @@ export default async function Home() {
         />
         <SkillsSection skills={skills} />
         <ExperienceSection experiences={experience} />
-        <FeaturedProjects projects={projects} />
+        <FeaturedProjects projects={mergeProjects(projects)} />
         <ContactSection />
         <Footer />
       </main>
