@@ -1,10 +1,10 @@
-# Deploying portfolio-FE (Cloudflare Workers)
+﻿# Deploying portfolio-FE (Cloudflare Workers)
 
-Next.js 16 on Cloudflare Workers, using [vinext](https://vinext.dev) — the
+Next.js 16 on Cloudflare Workers, using [vinext](https://vinext.dev) â€” the
 official Cloudflare adapter for Next.js.
 
 > The full setup guide (Neon, Render, checklist, troubleshooting, free-tier
-> limits) is in [`docs/FREE-TIER-HOSTING.md`](../../docs/FREE-TIER-HOSTING.md).
+> limits) is in [`docs/FREE-TIER-HOSTING.md`](https://github.com/islamAbuSleem/islamAbuSleem/blob/main/FREE-TIER-HOSTING.md).
 
 ---
 
@@ -16,14 +16,14 @@ Next.js App Router on Vite and emits a standard Workers bundle.
 
 `next.config.ts` rewrites `/api/*` to the API origin. The browser then only
 ever calls its own origin, which is what keeps the `SameSite=Lax` auth cookie
-working across `*.workers.dev` → `*.onrender.com`. **Do not set
+working across `*.workers.dev` â†’ `*.onrender.com`. **Do not set
 `NEXT_PUBLIC_API_URL` in production.**
 
 ## Commands
 
 | Command | What it does |
 |---|---|
-| `npm run dev` | Next.js dev server (unchanged — your normal workflow) |
+| `npm run dev` | Next.js dev server (unchanged â€” your normal workflow) |
 | `npm run build` | Next.js production build (unchanged) |
 | `npm run dev:vinext` | Vite-based dev server on port 3001 (matches the Workers runtime) |
 | `npm run build:vinext` | Builds the Cloudflare Workers bundle into `.cloudflare/output` |
@@ -34,15 +34,15 @@ working across `*.workers.dev` → `*.onrender.com`. **Do not set
 
 ## Deploying
 
-1. **Cloudflare dashboard → Workers & Pages → Create → Import a project**,
+1. **Cloudflare dashboard â†’ Workers & Pages â†’ Create â†’ Import a project**,
    connect `islamAbuSleem/portfolio-FE`.
 2. Build settings:
    - Build command: `npm run build:vinext`
    - Build output directory: *(leave empty)*
    - Node version: `22`
-3. **Settings → Variables and Secrets → Add**:
+3. **Settings â†’ Variables and Secrets â†’ Add**:
    - `API_URL` = `https://portfolio-be.onrender.com`
-     → **mark it as a build variable** (the rewrite destination is resolved
+     â†’ **mark it as a build variable** (the rewrite destination is resolved
      at build time)
    - `NODE_ENV` = `production`
 4. Save and deploy.
@@ -52,9 +52,9 @@ Your URL: `https://portfolio-fe.<your-subdomain>.workers.dev`
 ### Verify
 
 ```bash
-# 1. The rewrite is wired up — the build log prints this:
+# 1. The rewrite is wired up â€” the build log prints this:
 #    [vinext] Found 1 external rewrite that proxy requests to external origins:
-#      /api/:path* → https://portfolio-be.onrender.com/:path*
+#      /api/:path* â†’ https://portfolio-be.onrender.com/:path*
 #
 # 2. The proxy works:
 curl -i https://portfolio-fe.<sub>.workers.dev/api/projects
