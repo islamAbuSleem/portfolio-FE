@@ -22,11 +22,11 @@
  *
  * Cloudflare Workers and Render assign the hostnames during deployment, so
  * these are filled in once, after the first deploy. An empty string means
- * "not deployed yet" â€” the card then renders the GitHub link only, with no
+ * "not deployed yet" — the card then renders the GitHub link only, with no
  * broken "Live Demo" link.
  */
 export const PROJECT_LIVE_URLS = {
-  portfolio: "",
+  portfolio: "https://portfolio-fe.islamabusleem.workers.dev",
   productSearch: "",
   jobPilot: "",
   booking: "",

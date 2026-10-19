@@ -41,27 +41,49 @@ working across `*.workers.dev` â†’ `*.onrender.com`. **Do not set
    - Build output directory: *(leave empty)*
    - Node version: `22`
 3. **Settings â†’ Variables and Secrets â†’ Add**:
-   - `API_URL` = `https://portfolio-be.onrender.com`
+   - `API_URL` = `https://portfolio-usca.onrender.com`
      â†’ **mark it as a build variable** (the rewrite destination is resolved
      at build time)
    - `NODE_ENV` = `production`
 4. Save and deploy.
 
-Your URL: `https://portfolio-fe.<your-subdomain>.workers.dev`
+Your URL: `https://portfolio-fe.islamabusleem.workers.dev`
+
+### Deploying from the CLI (used for the first deploy)
+
+```bash
+# One-time: create an API token with
+#   Account -> Workers Scripts: Edit
+#   Account -> Account Settings: Read
+export CLOUDFLARE_API_TOKEN=<token>
+export CLOUDFLARE_ACCOUNT_ID=<account-id>
+
+# API_URL MUST be set: the rewrite destination is baked in at build time.
+export API_URL=https://portfolio-usca.onrender.com
+
+npm run deploy:vinext
+```
+
+The build log confirms the rewrite was picked up:
+
+```
+[vinext] Found 1 external rewrite that proxy requests to external origins:
+  /api/:path* -> https://portfolio-usca.onrender.com/:path*
+```
 
 ### Verify
 
 ```bash
 # 1. The rewrite is wired up â€” the build log prints this:
 #    [vinext] Found 1 external rewrite that proxy requests to external origins:
-#      /api/:path* â†’ https://portfolio-be.onrender.com/:path*
+#      /api/:path* â†’ https://portfolio-usca.onrender.com/:path*
 #
 # 2. The proxy works:
-curl -i https://portfolio-fe.<sub>.workers.dev/api/projects
+curl -i https://portfolio-fe.islamabusleem.workers.dev/api/projects
 #    -> 200 with a JSON array
 #
 # 3. Auth round-trips (this is the one that matters):
-#    sign in at https://portfolio-fe.<sub>.workers.dev/admin/login
+#    sign in at https://portfolio-fe.islamabusleem.workers.dev/admin/login
 ```
 
 ## Local development
