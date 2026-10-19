@@ -243,10 +243,10 @@ export const removeAccents = (str: string): string => {
 /**
  * Format ISO dates into a timeline period, e.g. "Jan 2022 — Present"
  */
-export const formatPeriod = (startDate: string, endDate?: string): string => {
+export const formatPeriod = (startDate: string, endDate?: string | null, current?: boolean): string => {
   const format = (iso: string) =>
     new Date(iso).toLocaleDateString("en-US", { month: "short", year: "numeric" });
-  return endDate
-    ? `${format(startDate)} — ${format(endDate)}`
-    : `${format(startDate)} — Present`;
+  return current || !endDate
+    ? `${format(startDate)} — Current`
+    : `${format(startDate)} — ${format(endDate)}`;
 };

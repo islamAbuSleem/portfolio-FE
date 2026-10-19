@@ -109,7 +109,7 @@ function ExperienceItem({
             </h3>
             <p className="text-primary font-medium">{experience.company}</p>
             <p className="text-label-md text-text-secondary mb-3">
-              {formatPeriod(experience.startDate, experience.endDate)}
+              {formatPeriod(experience.startDate, experience.endDate, experience.current)}
             </p>
             <p className="text-body-sm text-text-secondary">{experience.description}</p>
           </div>
