@@ -16,7 +16,7 @@ export function ExperienceSection({ experiences }: { experiences: Experience[] }
       <div className="shell flex flex-col gap-space-xl py-space-xl">
         <SectionHeading
           eyebrow="04 // career journey"
-          title="Engineering leadership &amp; roles"
+          title="Professional experience"
           description="Roles where I shipped work and grew as an engineer."
         />
 

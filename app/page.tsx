@@ -9,6 +9,7 @@ import { PortfolioNavbar } from "@/components/portfolio/PortfolioNavbar";
 import { getAbout, getExperience, getProjects, getSkills } from "@/lib/api";
 import { mergeProjects } from "@/lib/projects";
 import { yearsOfExperience } from "@/lib/utils";
+import { resolveBio } from "@/lib/profile";
 
 export default async function Home() {
   const [about, skills, experience, projects] = await Promise.all([
@@ -31,7 +32,7 @@ export default async function Home() {
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={about.avatarUrl}
-      alt="Islam Abusleem, Senior Full-Stack Engineer"
+      alt="Islam Abusleem, Senior Software Engineer"
       className="h-full w-full object-cover grayscale contrast-125 transition-all duration-700 ease-out hover:grayscale-0"
     />
   ) : undefined;
@@ -50,10 +51,7 @@ export default async function Home() {
         <FeaturedProjects projects={allProjects} />
         <AboutSection
           title="About Me"
-          description={
-            about?.bio ??
-            "Full-stack developer passionate about building beautiful, performant web applications. Experienced with React, Next.js, Vue, Nuxt, Node.js, NestJS, Java, Spring Boot, and modern cloud infrastructure."
-          }
+          description={resolveBio(about?.bio)}
         />
         <SkillsSection skills={skills} />
         <ExperienceSection experiences={experience} />

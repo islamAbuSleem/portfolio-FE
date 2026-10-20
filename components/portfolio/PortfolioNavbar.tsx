@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTheme } from "@/hooks/useTheme";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import { LocalClock } from "@/components/ui/LocalClock";
+import { PROFILE } from "@/lib/profile";
 
 /**
  * The work comes first: a reader deciding whether to keep scrolling should
@@ -33,10 +34,10 @@ export function PortfolioNavbar() {
           </span>
           <span className="hidden sm:flex flex-col leading-none">
             <span className="text-label-md uppercase tracking-widest text-text">
-              Islam Abusleem
+              {PROFILE.name}
             </span>
             <span className="mt-1 text-label-xs uppercase tracking-widest text-text-faint">
-              Sr. Full-Stack Engineer
+              {PROFILE.title}
             </span>
           </span>
         </Link>
@@ -44,7 +45,7 @@ export function PortfolioNavbar() {
         {/* Availability */}
         <span className="hidden lg:inline-flex items-center gap-2 rounded-lg border border-border bg-surface-container px-3 py-2 font-mono text-label-xs uppercase tracking-widest text-text-secondary">
           <span className="beacon" aria-hidden="true" />
-          Available for contract / staff roles
+          {PROFILE.location} · UTC {PROFILE.timezone}
         </span>
 
         <nav className="hidden md:flex items-center gap-6" aria-label="Sections">

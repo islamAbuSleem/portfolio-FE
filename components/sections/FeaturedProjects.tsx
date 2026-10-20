@@ -50,10 +50,10 @@ export function FeaturedProjects({ projects }: { projects: Project[] }) {
             eyebrow="Sys index // production artifacts"
             title={
               <>
-                Featured <span className="text-gradient">architectural work</span>
+                Selected <span className="text-gradient">work</span>
               </>
             }
-            description="Systems I have designed, built and shipped — each one examined as a case study rather than a screenshot."
+            description="Web applications, frontend platforms, backend services and APIs I have built and shipped."
             aside={
               <Link
                 href="/projects"
@@ -105,7 +105,7 @@ export function FeaturedProjects({ projects }: { projects: Project[] }) {
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-surface-container px-space-lg py-3">
               <span className="inline-flex items-center gap-2 font-mono text-label-xs uppercase tracking-widest text-secondary">
                 <span className="beacon beacon-secondary" aria-hidden="true" />
-                Flagship case study // {lead.featured ? "featured" : "lead project"}
+                Featured project // {lead.featured ? "highlighted" : "lead project"}
               </span>
               <span className="font-mono text-label-xs uppercase tracking-widest text-text-faint">
                 {lead.liveUrl ? "deployed" : "source only"}
@@ -322,18 +322,19 @@ export function FeaturedProjects({ projects }: { projects: Project[] }) {
           <div className="glass flex flex-col gap-5 rounded-2xl p-space-lg md:flex-row md:items-center md:justify-between">
             <div>
               <h3 className="text-headline-md text-text">
-                Want the architecture behind one of these?
+                Need a frontend or backend engineer?
               </h3>
               <p className="mt-2 text-body-md text-text-secondary measure">
-                Diagrams, trade-off notes and the decisions behind the code are
-                available on request.
+                I work on web applications, frontend platforms, backend services
+                and APIs — across fintech, government, healthcare,
+                transportation and e-commerce.
               </p>
             </div>
             <Link
               href="#contact"
               className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-white/20 bg-primary-container px-space-lg py-2.5 text-body-md font-semibold text-white transition-all duration-200 hover:bg-primary hover:shadow-[0_0_20px_rgba(99,102,241,0.4)]"
             >
-              Request a deep dive
+              Get in touch
               <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>

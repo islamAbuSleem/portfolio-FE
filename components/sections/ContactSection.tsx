@@ -9,10 +9,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Terminal } from "@/components/ui/Terminal";
 import { GithubIcon, LinkedinIcon } from "@/components/icons/SocialIcons";
 import { isValidEmail } from "@/lib/validation";
-
-const EMAIL = "islam.abusleem@gmail.com";
-const GITHUB_URL = "https://github.com/islamAbuSleem";
-const LINKEDIN_URL = "https://www.linkedin.com/in/islamabusleem";
+import { PROFILE } from "@/lib/profile";
 
 /**
  * Two halves: the channel, so a reader who already knows what they want can
@@ -26,7 +23,7 @@ export function ContactSection() {
   });
   const [sent, setSent] = useState(false);
   const [errors, setErrors] = useState<{ name?: string; email?: string; message?: string }>({});
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<string | null>(null);
 
   const validate = () => {
     const next: { name?: string; email?: string; message?: string } = {};
@@ -44,17 +41,17 @@ export function ContactSection() {
 
     const subject = `Portfolio enquiry from ${formState.name.trim()}`;
     const body = `${formState.message.trim()}\n\n— ${formState.name.trim()}\n${formState.email.trim()}`;
-    window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = `mailto:${PROFILE.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     setSent(true);
   };
 
-  const copyEmail = async () => {
+  const copy = async (value: string) => {
     try {
-      await navigator.clipboard.writeText(EMAIL);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      await navigator.clipboard.writeText(value);
+      setCopied(value);
+      setTimeout(() => setCopied(null), 2000);
     } catch {
-      /* clipboard unavailable - the address is on screen anyway */
+      /* clipboard unavailable - the value is on screen anyway */
     }
   };
 
@@ -64,7 +61,7 @@ export function ContactSection() {
         <SectionHeading
           eyebrow="05 // initiate transmission"
           title="Get in touch"
-          description="A project in mind, or an opportunity to discuss? Send a message and I will reply personally."
+          description="A role, a project, or a team that needs frontend and backend work? Send a message and I will reply personally."
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
@@ -81,17 +78,38 @@ export function ContactSection() {
                 </span>
                 <div className="flex items-center gap-3">
                   <a
-                    href={`mailto:${EMAIL}`}
+                    href={`mailto:${PROFILE.email}`}
                     className="text-body-md text-text transition-colors duration-200 hover:text-secondary break-all"
                   >
-                    {EMAIL}
+                    {PROFILE.email}
                   </a>
                   <button
                     type="button"
-                    onClick={copyEmail}
+                    onClick={() => copy(PROFILE.email)}
                     className="shrink-0 rounded-md bg-surface-container px-2 py-1 font-mono text-label-xs uppercase tracking-widest text-text-secondary transition-colors duration-200 hover:text-secondary"
                   >
-                    {copied ? "Copied" : "Copy"}
+                    {copied === PROFILE.email ? "Copied" : "Copy"}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1 border-t border-border pt-space-md">
+                <span className="font-mono text-label-xs uppercase tracking-widest text-text-faint">
+                  Phone
+                </span>
+                <div className="flex items-center gap-3">
+                  <a
+                    href={`tel:${PROFILE.phone.replace(/\s/g, "")}`}
+                    className="text-body-md text-text transition-colors duration-200 hover:text-secondary"
+                  >
+                    {PROFILE.phone}
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => copy(PROFILE.phone)}
+                    className="shrink-0 rounded-md bg-surface-container px-2 py-1 font-mono text-label-xs uppercase tracking-widest text-text-secondary transition-colors duration-200 hover:text-secondary"
+                  >
+                    {copied === PROFILE.phone ? "Copied" : "Copy"}
                   </button>
                 </div>
               </div>
@@ -101,7 +119,7 @@ export function ContactSection() {
                   Elsewhere
                 </span>
                 <a
-                  href={GITHUB_URL}
+                  href={PROFILE.github}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group inline-flex items-center gap-3 font-mono text-label-sm text-text-secondary transition-colors duration-200 hover:text-secondary"
@@ -110,7 +128,7 @@ export function ContactSection() {
                   <span>github.com/islamAbuSleem</span>
                 </a>
                 <a
-                  href={LINKEDIN_URL}
+                  href={PROFILE.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group inline-flex items-center gap-3 font-mono text-label-sm text-text-secondary transition-colors duration-200 hover:text-secondary"
@@ -125,21 +143,17 @@ export function ContactSection() {
                   Location
                 </span>
                 <span className="text-body-md text-text">
-                  Remote — worldwide
-                </span>
-                <span className="inline-flex items-center gap-2 pt-1 font-mono text-label-xs uppercase tracking-widest text-secondary">
-                  <span className="beacon" aria-hidden="true" />
-                  Available for contract / staff roles
+                  {PROFILE.location} · UTC {PROFILE.timezone}
                 </span>
               </div>
             </div>
 
             <Terminal title="quick-connect" status="bash">
               <div className="space-y-1.5">
-                <CommandLine label="mail" value={`mailto:${EMAIL}`} />
+                <CommandLine label="mail" value={`mailto:${PROFILE.email}`} />
+                <CommandLine label="call" value={PROFILE.phone} />
                 <CommandLine label="git" value="github.com/islamAbuSleem" />
                 <CommandLine label="in" value="linkedin.com/in/islamabusleem" />
-                <CommandLine label="site" value="islamabusleem.dev" />
               </div>
             </Terminal>
           </div>
@@ -166,10 +180,10 @@ export function ContactSection() {
                     <p className="mt-3 text-body-md text-text-secondary measure">
                       If nothing happened, write to{" "}
                       <a
-                        href={`mailto:${EMAIL}`}
+                        href={`mailto:${PROFILE.email}`}
                         className="text-secondary underline underline-offset-4"
                       >
-                        {EMAIL}
+                        {PROFILE.email}
                       </a>{" "}
                       directly.
                     </p>
@@ -202,12 +216,12 @@ export function ContactSection() {
                       placeholder="you@example.com"
                     />
                     <Textarea
-                      label="Architecture overview & challenge description *"
+                      label="What are you building? *"
                       value={formState.message}
                       onChange={(e) => setFormState({ ...formState, message: e.target.value })}
                       rows={6}
                       error={errors.message}
-                      placeholder="What are you building?"
+                      placeholder="Brief on the role, the product, or the problem."
                     />
                     <Button type="submit" size="lg" className="mt-1">
                       Transmit message
@@ -219,18 +233,19 @@ export function ContactSection() {
           </div>
         </div>
 
-        {/* Practicalities */}
+        {/* The facts, in one line */}
         <ScrollReveal>
           <div className="glass flex flex-wrap items-center justify-between gap-x-8 gap-y-3 rounded-2xl px-space-lg py-space-md">
             <span className="inline-flex items-center gap-2 font-mono text-label-xs uppercase tracking-widest text-secondary">
               <span className="beacon beacon-primary" aria-hidden="true" />
-              Practicalities
+              At a glance
             </span>
             <div className="flex flex-wrap items-center gap-x-8 gap-y-2 font-mono text-label-sm">
-              <Fact label="timezone" value="GMT+3" />
-              <Fact label="coverage" value="Worldwide" />
-              <Fact label="engagement" value="Contract / Staff" />
-              <Fact label="replies" value="Directly" />
+              <Fact label="experience" value={`${PROFILE.yearsExperience}+ years`} />
+              <Fact label="timezone" value={PROFILE.timezone} />
+              <Fact label="based" value={PROFILE.location} />
+              <Fact label="languages" value="AR · EN · ES" />
+              <Fact label="role" value={PROFILE.title} />
             </div>
           </div>
         </ScrollReveal>

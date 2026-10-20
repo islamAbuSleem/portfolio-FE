@@ -21,11 +21,11 @@ export const metadata: Metadata = {
   // The custom domain is the canonical origin of the site.
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Islam Abusleem — Senior Full-Stack Engineer",
+    default: "Islam Abusleem — Senior Software Engineer, Frontend & Backend",
     template: "%s — Islam Abusleem",
   },
   description:
-    "Senior full-stack engineer building distributed systems, backend services and interfaces that hold up in production. Next.js, NestJS, PostgreSQL.",
+    "Senior Software Engineer with 8+ years of experience building scalable web applications, frontend platforms, backend services and APIs across fintech, government, healthcare, transportation and e-commerce.",
   applicationName: "Islam Abusleem",
   authors: [{ name: "Islam Abusleem", url: "https://github.com/islamAbuSleem" }],
   creator: "Islam Abusleem",
@@ -36,15 +36,15 @@ export const metadata: Metadata = {
     type: "website",
     url: "/",
     siteName: "Islam Abusleem",
-    title: "Islam Abusleem — Senior Full-Stack Engineer",
+    title: "Islam Abusleem — Senior Software Engineer, Frontend & Backend",
     description:
-      "Senior full-stack engineer building distributed systems, backend services and interfaces that hold up in production.",
+      "Senior Software Engineer with 8+ years of experience building scalable web applications, frontend platforms, backend services and APIs.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Islam Abusleem — Senior Full-Stack Engineer",
+    title: "Islam Abusleem — Senior Software Engineer, Frontend & Backend",
     description:
-      "Senior full-stack engineer building distributed systems, backend services and interfaces that hold up in production.",
+      "Senior Software Engineer with 8+ years of experience building scalable web applications, frontend platforms, backend services and APIs.",
   },
   robots: { index: true, follow: true },
 };

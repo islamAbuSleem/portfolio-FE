@@ -5,14 +5,17 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import Link from "next/link";
 import { Skill, SkillCategory } from "@/lib/api";
 import { ArrowUpRight } from "lucide-react";
+import { PROFILE } from "@/lib/profile";
 
 const CATEGORY_ORDER: SkillCategory[] = ["Frontend", "Backend", "DevOps", "Tools", "Other"];
 
 const CATEGORY_NOTE: Record<SkillCategory, string> = {
-  Frontend: "Interfaces that stay fast, accessible and legible under load.",
-  Backend: "Services with clear contracts, predictable failure and real observability.",
-  DevOps: "Pipelines and infrastructure that make shipping boring.",
-  Tools: "The day-to-day instrument set — testing, review, automation.",
+  Frontend:
+    "Interfaces that stay fast, responsive and usable — and that a team can keep shipping.",
+  Backend:
+    "Services, REST APIs and the data behind them, built to be maintainable.",
+  DevOps: "Containers, versioning and the tooling around delivery.",
+  Tools: "Version control and the day-to-day instrument set.",
   Other: "Everything else that earns its place in the toolbox.",
 };
 
@@ -47,8 +50,8 @@ export function SkillsSection({ skills }: { skills: Skill[] }) {
       <div className="shell flex flex-col gap-space-xl py-space-xl">
         <SectionHeading
           eyebrow="03 // competency matrix"
-          title="Technical mastery"
-          description="Technologies and practices used to build reliable, scalable systems."
+          title="Technical skills"
+          description="Technologies and practices used to build reliable, scalable web applications."
         />
 
         {categories.length === 0 ? (
@@ -95,6 +98,31 @@ export function SkillsSection({ skills }: { skills: Skill[] }) {
             ))}
           </div>
         )}
+
+        {/* The rest of the CV's toolset, beyond the tracked skills. */}
+        <ScrollReveal>
+          <div className="glass flex flex-col gap-space-md rounded-2xl p-space-lg">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <span className="inline-flex items-center gap-2 font-mono text-label-xs uppercase tracking-widest text-secondary">
+                <span className="beacon beacon-primary" aria-hidden="true" />
+                Also in the toolbox
+              </span>
+              <span className="font-mono text-label-xs uppercase tracking-widest text-text-faint">
+                {PROFILE.additionalStack.length} entries
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {PROFILE.additionalStack.map((tech) => (
+                <span
+                  key={tech}
+                  className="rounded-md border border-border bg-surface-container px-2.5 py-1 font-mono text-label-sm text-text-secondary"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+        </ScrollReveal>
 
         {/* Summary strip */}
         <ScrollReveal>

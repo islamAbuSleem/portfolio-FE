@@ -42,7 +42,7 @@ export default async function ProjectsPage({
             description={
               selectedSkill
                 ? `Tagged with ${selectedSkill}.`
-                : `A selection of ${projects.length} projects across systems, interfaces and infrastructure.`
+                : `A selection of ${projects.length} projects across web applications, frontend platforms, backend services and APIs.`
             }
             aside={
               <span className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface-container px-4 py-2.5 font-mono text-label-sm uppercase tracking-widest text-text-secondary">

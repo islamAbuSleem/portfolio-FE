@@ -4,19 +4,18 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ArrowDown, Mail, Terminal as TerminalIcon } from "lucide-react";
 import { Experience, Project, Skill } from "@/lib/api";
+import { PROFILE } from "@/lib/profile";
 import { Badge } from "@/components/ui/Badge";
 import { Terminal } from "@/components/ui/Terminal";
 import { MetricCard } from "@/components/ui/MetricCard";
 import { PortraitPlate } from "@/components/ui/PortraitPlate";
 
-const EMAIL = "islam.abusleem@gmail.com";
-
 /**
  * The first viewport is a thesis, not a header: who this is, what they do,
  * and - immediately - the evidence for it.
  *
- * Every number on this screen is computed from the site's own data. Nothing
- * here is decoration pretending to be telemetry.
+ * Every number on this screen is computed from the site's own data or taken
+ * from the CV. Nothing here is decoration pretending to be telemetry.
  */
 export function Hero({
   projects,
@@ -56,6 +55,11 @@ export function Hero({
       return true;
     });
   }, [projects, skills]);
+
+  const experienceYears = useMemo(
+    () => Math.max(years ?? 0, PROFILE.yearsExperience),
+    [years],
+  );
 
   /**
    * The sparkline is the real skill profile: average proficiency for each
@@ -104,7 +108,7 @@ export function Hero({
 
   const copyEmail = async () => {
     try {
-      await navigator.clipboard.writeText(EMAIL);
+      await navigator.clipboard.writeText(PROFILE.email);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -121,11 +125,11 @@ export function Hero({
         <div className="flex flex-wrap items-center justify-between gap-space-sm">
           <div className="flex items-center gap-space-sm rounded-lg border border-border bg-surface-container px-space-sm py-space-xs font-mono text-label-sm text-text-secondary">
             <span className="beacon" aria-hidden="true" />
-            <span className="text-secondary">NODE: SA-RIYADH</span>
+            <span className="text-secondary">BASED: {PROFILE.location}</span>
             <span className="hidden text-text-faint sm:inline">/</span>
-            <span className="hidden sm:inline">LATENCY: LOCAL</span>
+            <span className="hidden sm:inline">UTC {PROFILE.timezone}</span>
             <span className="hidden text-text-faint sm:inline">/</span>
-            <span className="text-text">ENV: PROD</span>
+            <span className="text-text">SINCE 2017</span>
           </div>
           <div className="flex items-center gap-space-sm font-mono text-label-xs uppercase tracking-widest text-text-faint">
             <span>PROJECTS: {projects.length}</span>
@@ -139,18 +143,19 @@ export function Hero({
           <div className="lg:col-span-8 flex flex-col gap-space-md">
             <div className="inline-flex items-center gap-space-xs font-mono text-label-xs uppercase tracking-widest text-secondary">
               <TerminalIcon className="h-4 w-4" aria-hidden="true" />
-              <span>Systems Reliability · Product Engineering</span>
+              <span>
+                {PROFILE.title} · {PROFILE.titleSecondary}
+              </span>
             </div>
 
             <h1 className="text-display-xl text-text">
-              Senior Full-Stack Engineer
+              {PROFILE.title}
               <br className="hidden sm:block" />{" "}
-              <span className="text-gradient">&amp; Systems Architect</span>
+              <span className="text-gradient">&amp; {PROFILE.titleSecondary}</span>
             </h1>
 
             <p className="text-body-lg text-text-secondary measure">
-              I build distributed systems, backend services and interfaces that
-              hold up in production — and I ship them, not just design them.
+              {PROFILE.headline}
             </p>
 
             <div className="flex flex-wrap items-center gap-space-md pt-space-xs">
@@ -158,7 +163,7 @@ export function Hero({
                 href="#projects"
                 className="group inline-flex items-center gap-2 rounded-lg border border-white/20 bg-primary-container px-space-lg py-2.5 text-body-md font-semibold text-white transition-all duration-200 hover:bg-primary hover:shadow-[0_0_20px_rgba(99,102,241,0.4)]"
               >
-                <span>Explore selected work</span>
+                <span>View selected work</span>
                 <ArrowDown
                   className="h-4 w-4 transition-transform duration-200 group-hover:translate-y-0.5"
                   aria-hidden="true"
@@ -178,7 +183,7 @@ export function Hero({
                   $
                 </span>
                 <code className="select-all font-mono text-label-sm text-text">
-                  mailto {EMAIL}
+                  mailto {PROFILE.email}
                 </code>
                 <button
                   type="button"
@@ -194,21 +199,20 @@ export function Hero({
           {/* The stack, in one panel */}
           <div className="lg:col-span-4 flex flex-col gap-space-sm rounded-xl border border-border bg-surface-container p-space-lg">
             <span className="font-mono text-label-xs uppercase tracking-widest text-text-faint">
-              Active engineering stack
+              Core stack
             </span>
             <div className="flex flex-wrap gap-space-xs">
-              {stack.slice(0, 14).map((tech) => (
+              {PROFILE.stack.map((tech) => (
                 <Badge key={tech} tone="secondary">
                   {tech}
                 </Badge>
               ))}
-              {stack.length === 0 && (
-                <span className="text-body-sm text-text-faint">Stack syncing…</span>
-              )}
             </div>
             <div className="mt-space-sm flex items-center justify-between border-t border-border pt-space-sm font-mono text-label-sm">
-              <span className="text-text-secondary">Deployment:</span>
-              <span className="text-primary">Cloudflare Workers (edge)</span>
+              <span className="text-text-secondary">Also used:</span>
+              <span className="text-primary">
+                {PROFILE.additionalStack.length} more technologies
+              </span>
             </div>
           </div>
         </div>
@@ -221,39 +225,48 @@ export function Hero({
               <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-surface-container to-transparent" />
               <div className="absolute left-4 top-4 flex items-center gap-2 rounded-lg border border-border bg-surface-container-lowest/80 px-3 py-1.5 backdrop-blur-md font-mono text-label-sm text-text">
                 <span className="beacon" aria-hidden="true" />
-                Islam Abusleem · Staff tier
+                {PROFILE.name} · {PROFILE.title}
               </div>
             </div>
             <div className="flex flex-1 flex-col justify-between gap-3 p-space-lg">
               <div>
                 <div className="text-headline-sm text-text">
-                  Systems pragmatist &amp; builder
+                  Frontend &amp; backend engineer
                 </div>
                 <p className="mt-2 text-body-md text-text-secondary">
-                  Focused on domain-driven design, real-time architectures,
-                  ergonomic internal tooling and software lifecycle reliability.
+                  Translating business requirements into reliable, maintainable
+                  and user-focused software.
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-4 border-t border-border pt-space-md font-mono text-label-sm text-primary">
-                {years !== null && <span>{years}+ yrs experience</span>}
-                <span>Remote — worldwide</span>
-                <span>Staff architect</span>
+                <span>{PROFILE.yearsExperience}+ yrs experience</span>
+                <span>{PROFILE.location}</span>
+                <span>UTC {PROFILE.timezone}</span>
               </div>
             </div>
           </div>
 
           <div className="lg:col-span-7 flex flex-col justify-between rounded-xl border border-border bg-surface-container-lowest p-space-lg">
             <Terminal
-              title="portfolio.config"
+              title="profile.config"
               status="loaded"
               className="border-0"
             >
               <div className="space-y-1">
-                <ConfigRow label="role" value="Senior Full-Stack Engineer" accent="primary" />
-                <ConfigRow label="focus" value="Distributed systems · backend · interface architecture" />
-                <ConfigRow label="projects" value={`${projects.length} published · ${featuredCount} featured`} accent="secondary" />
-                <ConfigRow label="stack" value={stack.slice(0, 6).join(" · ") || "loading"} />
-                <ConfigRow label="contact" value={EMAIL} accent="tertiary" />
+                <ConfigRow
+                  label="role"
+                  value={`${PROFILE.title} — ${PROFILE.titleSecondary}`}
+                  accent="primary"
+                />
+                <ConfigRow label="focus" value={PROFILE.summary} />
+                <ConfigRow
+                  label="projects"
+                  value={`${projects.length} published · ${featuredCount} featured`}
+                  accent="secondary"
+                />
+                <ConfigRow label="stack" value={PROFILE.stack.slice(0, 6).join(" · ")} />
+                <ConfigRow label="based" value={`${PROFILE.location} (UTC ${PROFILE.timezone})`} />
+                <ConfigRow label="contact" value={PROFILE.email} accent="tertiary" />
               </div>
             </Terminal>
 
@@ -272,14 +285,14 @@ export function Hero({
               />
               <MetricCard
                 label="Years experience"
-                value={years !== null ? `${years}+` : "—"}
-                hint="on record"
+                value={`${experienceYears}+`}
+                hint="in production"
                 accent="tertiary"
               />
               <MetricCard
                 label="Roles held"
                 value={experiences.length}
-                hint="in the ledger"
+                hint="across the career"
                 accent="primary"
               />
             </div>
@@ -331,12 +344,10 @@ export function Hero({
 
             <div className="flex flex-col gap-2 pt-space-md">
               <div className="font-mono text-label-xs uppercase tracking-widest text-text-faint">
-                Engineering core tenet
+                What the work is like
               </div>
               <p className="text-body-md italic text-text">
-                “Software architecture is the art of postponing decisions while
-                maintaining execution velocity, deterministic contracts and
-                uncompromising developer empathy.”
+                “{PROFILE.coreStrengths[0]}”
               </p>
             </div>
           </div>
