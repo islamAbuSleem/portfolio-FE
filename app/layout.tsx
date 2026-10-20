@@ -1,20 +1,19 @@
 import type { Metadata } from "next";
-import { Archivo, Geist_Mono } from "next/font/google";
+import { Geist, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/hooks/useTheme";
 import { ToastProvider } from "@/components/ui/Toast";
 import { SITE_URL } from "@/lib/site";
 
-const archivo = Archivo({
+const geist = Geist({
   subsets: ["latin"],
-  axes: ["wdth"],
-  variable: "--font-archivo",
+  variable: "--font-geist",
   display: "swap",
 });
 
-const geistMono = Geist_Mono({
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-geist-mono",
+  variable: "--font-jetbrains-mono",
   display: "swap",
 });
 
@@ -73,7 +72,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${archivo.variable} ${geistMono.variable} h-full antialiased`}
+      className={`dark ${geist.variable} ${jetbrainsMono.variable} h-full antialiased`}
       style={{ colorScheme: "dark" }}
       suppressHydrationWarning
     >

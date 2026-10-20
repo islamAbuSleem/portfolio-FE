@@ -1,49 +1,69 @@
 "use client";
 
 import { ReactNode } from "react";
+import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Terminal } from "@/components/ui/Terminal";
 
 /**
- * The about statement. No portrait treatment, no ornament: the words and a
- * monogram do the work, separated by the same hairline rules used elsewhere.
+ * The about statement. The words carry it; the panel beside them carries the
+ * facts, and the quote carries the point of view.
  */
 export function AboutSection({
   title,
   description,
-  avatar,
+  facts,
 }: {
   title: string;
   description: string;
-  avatar?: ReactNode;
+  facts?: { label: string; value: ReactNode }[];
 }) {
+  const defaultFacts: { label: string; value: ReactNode }[] = [
+    { label: "focus", value: "Backend services, distributed systems, interface architecture" },
+    { label: "stack", value: "Next.js, NestJS, PostgreSQL, TypeScript" },
+    { label: "based", value: "Saudi Arabia (GMT+3) — open to remote, worldwide" },
+  ];
+
+  const rows = facts && facts.length > 0 ? facts : defaultFacts;
+
   return (
-    <section id="about" data-accent="mint" className="relative scroll-mt-24 overflow-hidden">
-      <div className="shell">
-        <div className="rule section-rule pt-16 md:pt-24 pb-16 md:pb-24 grid grid-cols-1 lg:grid-cols-12 gap-x-10 gap-y-10 relative">
-          {/* Oversized numeral: scale and depth, without competing for
-              attention. */}
-          <span
-            className="giant-num absolute -top-10 right-0 lg:right-4 -z-10 pointer-events-none select-none"
-            aria-hidden="true"
-          >
-            08
-          </span>
+    <section id="about" className="ambient relative scroll-mt-28 border-t border-border">
+      <div className="shell flex flex-col gap-space-xl py-space-xl">
+        <SectionHeading
+          eyebrow="02 // operating principles"
+          title={title}
+          description="What I optimise for, and the standards I hold the work to."
+        />
 
-          <div className="lg:col-span-3">
-            <p className="text-label-xs section-index">02</p>
-            <h2 className="mt-3 text-headline-lg text-text">{title}</h2>
-            <p className="mt-3 text-label-md text-text-faint">
-              8+ years shipping
-            </p>
-          </div>
-
-          <div className="lg:col-span-6 lg:col-start-5">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+          <div className="lg:col-span-7 flex flex-col gap-space-md">
             <p className="text-body-lg text-text-secondary measure text-[1.0625rem] md:text-[1.1875rem]">
               {description}
             </p>
+
+            <figure className="glass rounded-2xl p-space-lg">
+              <div className="font-mono text-label-xs uppercase tracking-widest text-text-faint">
+                Engineering core tenet
+              </div>
+              <blockquote className="mt-3 text-body-lg italic text-text">
+                “Software architecture is the art of postponing decisions while
+                maintaining execution velocity, deterministic type contracts and
+                zero-compromise developer empathy.”
+              </blockquote>
+              <figcaption className="mt-4 font-mono text-label-sm text-text-faint">
+                — Islam Abusleem
+              </figcaption>
+            </figure>
           </div>
 
-          <div className="lg:col-span-2 lg:col-start-11 lg:justify-self-end">
-            {avatar}
+          <div className="lg:col-span-5">
+            <Terminal title="about.profile" status="loaded" bodyClassName="space-y-1">
+              {rows.map((row) => (
+                <div key={row.label} className="flex flex-col gap-0.5 sm:flex-row sm:gap-3">
+                  <span className="w-20 shrink-0 text-text-faint">{row.label}</span>
+                  <span className="text-text">{row.value}</span>
+                </div>
+              ))}
+            </Terminal>
           </div>
         </div>
       </div>

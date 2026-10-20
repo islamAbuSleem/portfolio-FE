@@ -8,6 +8,7 @@ import { Footer } from "@/components/sections/Footer";
 import { PortfolioNavbar } from "@/components/portfolio/PortfolioNavbar";
 import { getAbout, getExperience, getProjects, getSkills } from "@/lib/api";
 import { mergeProjects } from "@/lib/projects";
+import { yearsOfExperience } from "@/lib/utils";
 
 export default async function Home() {
   const [about, skills, experience, projects] = await Promise.all([
@@ -19,31 +20,39 @@ export default async function Home() {
 
   const allProjects = mergeProjects(projects);
 
+  /**
+   * Years of experience, measured from the earliest role on record. Computed
+   * on the server so the number the visitor reads is the same one the
+   * server rendered.
+   */
+  const years = yearsOfExperience(experience);
+
+  const avatar = about?.avatarUrl ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={about.avatarUrl}
+      alt="Islam Abusleem, Senior Full-Stack Engineer"
+      className="h-full w-full object-cover grayscale contrast-125 transition-all duration-700 ease-out hover:grayscale-0"
+    />
+  ) : undefined;
+
   return (
     <>
       <PortfolioNavbar />
       <main className="flex-1">
-        <Hero projects={allProjects} />
+        <Hero
+          projects={allProjects}
+          skills={skills}
+          experiences={experience}
+          years={years}
+          avatar={avatar}
+        />
         <FeaturedProjects projects={allProjects} />
         <AboutSection
           title="About Me"
           description={
             about?.bio ??
             "Full-stack developer passionate about building beautiful, performant web applications. Experienced with React, Next.js, Vue, Nuxt, Node.js, NestJS, Java, Spring Boot, and modern cloud infrastructure."
-          }
-          avatar={
-            about?.avatarUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={about.avatarUrl}
-                alt="Islam Abusleem"
-                className="w-full aspect-square object-cover border border-border"
-              />
-            ) : (
-              <div className="w-full aspect-square grid place-items-center border border-border bg-surface-elevated">
-                <span className="text-display-lg-mobile text-text-faint">IA</span>
-              </div>
-            )
           }
         />
         <SkillsSection skills={skills} />

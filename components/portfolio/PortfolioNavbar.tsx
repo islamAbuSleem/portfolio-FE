@@ -24,18 +24,30 @@ export function PortfolioNavbar() {
   const active = useActiveSection(SECTION_IDS);
 
   return (
-    <header className="fixed top-0 inset-x-0 z-50 bg-bg/90 backdrop-blur-md rule-b">
-      <div className="shell h-14 flex items-center justify-between gap-6">
+    <header className="fixed top-0 inset-x-0 z-50 border-b border-border bg-bg/80 backdrop-blur-xl">
+      <div className="shell flex h-16 items-center justify-between gap-5">
+        {/* Identity */}
         <Link href="/" className="group flex items-center gap-3 shrink-0">
-          <span className="w-7 h-7 grid place-items-center bg-primary text-on-primary text-label-xs font-semibold">
+          <span className="w-8 h-8 grid place-items-center rounded-lg border border-primary/30 bg-primary/10 text-primary font-mono text-label-sm font-semibold transition-colors duration-200 group-hover:bg-primary/20">
             IA
           </span>
-          <span className="text-label-lg text-text group-hover:text-primary transition-colors duration-200">
-            Islam Abusleem
+          <span className="hidden sm:flex flex-col leading-none">
+            <span className="text-label-md uppercase tracking-widest text-text">
+              Islam Abusleem
+            </span>
+            <span className="mt-1 text-label-xs uppercase tracking-widest text-text-faint">
+              Sr. Full-Stack Engineer
+            </span>
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-7" aria-label="Sections">
+        {/* Availability */}
+        <span className="hidden lg:inline-flex items-center gap-2 rounded-lg border border-border bg-surface-container px-3 py-2 font-mono text-label-xs uppercase tracking-widest text-text-secondary">
+          <span className="beacon" aria-hidden="true" />
+          Available for contract / staff roles
+        </span>
+
+        <nav className="hidden md:flex items-center gap-6" aria-label="Sections">
           {SECTIONS.map((section) => {
             const isActive = active === section.id;
             return (
@@ -43,19 +55,18 @@ export function PortfolioNavbar() {
                 key={section.id}
                 href={section.href}
                 aria-current={isActive ? "true" : undefined}
-                className={`text-label-md transition-colors duration-200 ${
+                className={`font-mono text-label-sm uppercase tracking-widest transition-colors duration-200 ${
                   isActive ? "text-primary" : "text-text-secondary hover:text-text"
                 }`}
               >
-                <span className="tnum mr-2 text-text-faint">{section.index}</span>
                 {section.label}
               </Link>
             );
           })}
         </nav>
 
-        <div className="flex items-center gap-4 shrink-0">
-          <span className="hidden sm:block">
+        <div className="flex items-center gap-3 shrink-0">
+          <span className="hidden xl:block">
             <LocalClock />
           </span>
           <button
@@ -66,7 +77,7 @@ export function PortfolioNavbar() {
                 ? `Switch to ${theme === "dark" ? "light" : "dark"} theme`
                 : "Toggle theme"
             }
-            className="w-8 h-8 grid place-items-center border border-border text-text-secondary hover:text-primary hover:border-primary transition-colors duration-200 cursor-pointer"
+            className="w-8 h-8 grid place-items-center rounded-lg border border-border text-text-secondary hover:text-primary hover:border-primary/50 transition-colors duration-200 cursor-pointer"
           >
             {mounted ? (
               theme === "dark" ? (
@@ -80,6 +91,30 @@ export function PortfolioNavbar() {
           </button>
         </div>
       </div>
+
+      {/* The same index, on one scrollable line, for narrow screens. */}
+      <nav
+        className="md:hidden flex items-center gap-5 overflow-x-auto border-t border-border px-6 py-2.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        aria-label="Sections"
+      >
+        {SECTIONS.map((section) => {
+          const isActive = active === section.id;
+          return (
+            <Link
+              key={section.id}
+              href={section.href}
+              aria-current={isActive ? "true" : undefined}
+              className={`shrink-0 font-mono text-label-sm uppercase tracking-widest transition-colors duration-200 ${
+                isActive
+                  ? "text-primary"
+                  : "text-text-secondary hover:text-text"
+              }`}
+            >
+              {section.label}
+            </Link>
+          );
+        })}
+      </nav>
     </header>
   );
 }
@@ -95,7 +130,7 @@ function SunIcon() {
 
 function MoonIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" aria-hidden="true">
       <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
     </svg>
   );

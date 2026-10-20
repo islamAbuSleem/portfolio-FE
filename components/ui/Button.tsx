@@ -13,23 +13,24 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 /**
- * Squared, quiet, and honest about state. A hairline border is the only
- * elevation used; there is no glow.
+ * Three voices: a solid indigo action, a glass secondary, and a monospaced
+ * ghost that shifts to cyan on hover.
  */
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-primary text-on-primary border border-transparent hover:bg-primary-dim",
+    "bg-primary-container text-white border border-white/20 hover:bg-primary hover:shadow-[0_0_20px_rgba(99,102,241,0.4)]",
   secondary:
-    "bg-transparent text-text border border-border hover:border-primary hover:text-primary",
+    "glass text-text border border-border hover:bg-surface-container-high hover:border-secondary/40",
   ghost:
-    "bg-transparent text-text-secondary border border-transparent hover:text-primary",
-  danger: "bg-error text-white border border-transparent hover:brightness-95",
+    "bg-transparent text-text-secondary border border-transparent font-mono hover:text-secondary",
+  danger:
+    "bg-error text-[#690005] border border-transparent hover:brightness-95",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: "px-3 py-1.5 text-label-md gap-1.5",
-  md: "px-5 py-2.5 text-body-sm gap-2",
-  lg: "px-6 py-3 text-body-md gap-2.5",
+  sm: "px-3 py-1.5 text-label-sm gap-1.5 rounded-md",
+  md: "px-4 py-2 text-label-md gap-2 rounded-lg",
+  lg: "px-5 py-2.5 text-body-md gap-2.5 rounded-lg",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -44,7 +45,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         type="button"
         disabled={isDisabled}
-        className={`inline-flex items-center justify-center font-medium rounded-sm transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
+        className={`inline-flex items-center justify-center font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
         {...props}
       >
         {isLoading && (

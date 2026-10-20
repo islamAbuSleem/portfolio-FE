@@ -12,15 +12,15 @@ interface TagPillProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 const variantClasses = {
-  primary: "bg-primary/15 text-primary border-primary/30",
-  secondary: "bg-secondary/15 text-secondary border-secondary/30",
-  outline: "bg-transparent text-text-secondary border-border",
-  filled: "bg-surface-elevated text-text border-transparent",
+  primary: "bg-primary/12 text-primary border-primary/30",
+  secondary: "bg-secondary/12 text-secondary border-secondary/30",
+  outline: "bg-surface-container text-text-secondary border-border",
+  filled: "bg-surface-container-high text-text border-transparent",
 };
 
 const sizeClasses = {
-  sm: "px-2 py-0.5 text-[11px] gap-1",
-  md: "px-3 py-1 text-label-sm gap-1.5",
+  sm: "px-2 py-0.5 text-[11px] gap-1 rounded-md",
+  md: "px-2.5 py-1 text-label-sm gap-1.5 rounded-md",
 };
 
 export const TagPill = forwardRef<HTMLSpanElement, TagPillProps>(
@@ -28,7 +28,7 @@ export const TagPill = forwardRef<HTMLSpanElement, TagPillProps>(
     return (
       <span
         ref={ref}
-        className={`inline-flex items-center font-mono rounded-full border transition-colors ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
+        className={`inline-flex items-center font-mono border transition-colors ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
         {...props}
       >
         {children}
@@ -36,7 +36,7 @@ export const TagPill = forwardRef<HTMLSpanElement, TagPillProps>(
           <button
             type="button"
             onClick={onRemove}
-            className="flex items-center justify-center w-5 h-5 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+            className="flex items-center justify-center w-4 h-4 rounded-sm hover:bg-white/10 transition-colors"
             aria-label="Remove tag"
           >
             <CloseIcon width={12} height={12} />

@@ -250,3 +250,23 @@ export const formatPeriod = (startDate: string, endDate?: string | null, current
     ? `${format(startDate)} — Current`
     : `${format(startDate)} — ${format(endDate)}`;
 };
+
+/**
+ * Years of experience, measured from the earliest role on record.
+ *
+ * Lives outside the component tree on purpose: the answer depends on the
+ * clock, so it is computed once on the server and passed down as a value
+ * rather than recalculated on every render.
+ */
+export const yearsOfExperience = (
+  roles: { startDate: string; endDate?: string | null; current?: boolean }[],
+  now: number = Date.now(),
+): number | null => {
+  if (roles.length === 0) return null;
+  const stamps = roles.map((role) =>
+    role.current ? now : new Date(role.endDate || role.startDate).getTime(),
+  );
+  const earliest = Math.min(...stamps);
+  if (Number.isNaN(earliest)) return null;
+  return Math.max(0, Math.floor((now - earliest) / (365.25 * 24 * 60 * 60 * 1000)));
+};

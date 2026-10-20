@@ -9,6 +9,10 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   icon?: ReactNode;
 }
 
+/**
+ * An inset field on the deepest surface, with the label lifted out as a
+ * monospaced caption above it.
+ */
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, error, hint, icon, className = "", id: providedId, ...props }, ref) => {
     const generatedId = useId();
@@ -18,7 +22,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div className="w-full">
-        <label htmlFor={id} className="block text-label-xs text-text-faint mb-2">
+        <label htmlFor={id} className="block font-mono text-label-xs uppercase tracking-widest text-text-faint mb-2">
           {label}
         </label>
         <div className="relative">
@@ -32,7 +36,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             id={id}
             aria-invalid={error ? "true" : "false"}
             aria-describedby={`${error ? errorId : ""} ${hint ? hintId : ""}`.trim() || undefined}
-            className={`w-full bg-surface border border-border text-text placeholder:text-text-faint focus:border-primary transition-colors duration-200 py-3 px-3 rounded-sm ${error ? "border-error focus:border-error" : ""} ${icon ? "pl-10" : ""} ${className}`}
+            className={`w-full bg-surface-container-lowest border border-border text-text placeholder:text-text-faint focus:border-primary focus:shadow-[0_0_0_3px_rgba(99,102,241,0.15)] transition-all duration-200 py-2.5 px-3 rounded-lg text-body-md ${error ? "border-error focus:border-error" : ""} ${icon ? "pl-10" : ""} ${className}`}
             {...props}
           />
         </div>

@@ -14,7 +14,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className={`space-y-2 ${className}`}>
         {label && (
-          <label htmlFor={props.id} className="block text-label-xs text-text-faint">
+          <label htmlFor={props.id} className="block font-mono text-label-xs uppercase tracking-widest text-text-faint">
             {label}
             {(props.required || props["aria-required"] === "true") && (
               <span className="text-error ml-1">*</span>
@@ -23,7 +23,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         )}
         <textarea
           ref={ref}
-          className={`w-full bg-surface border border-border rounded-sm px-3 py-3 text-text placeholder:text-text-faint focus:border-primary transition-colors duration-200 resize-y ${
+          className={`w-full bg-surface-container-lowest border border-border rounded-lg px-3 py-2.5 text-body-md text-text placeholder:text-text-faint focus:border-primary focus:shadow-[0_0_0_3px_rgba(99,102,241,0.15)] transition-all duration-200 resize-y ${
             error ? "border-error focus:border-error" : ""
           } ${props.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
           rows={rows}
