@@ -174,7 +174,7 @@ export default function AdminExperiencePage() {
                 <p className="text-label-md text-text-secondary mb-3">
                   {new Date(item.startDate).toLocaleDateString("en-US", { year: "numeric", month: "short" })} — {item.current ? "Current" : item.endDate ? new Date(item.endDate).toLocaleDateString("en-US", { year: "numeric", month: "short" }) : "Current"}
                 </p>
-                <p className="text-body-sm text-text-secondary">{item.description}</p>
+                <p className="text-body-sm text-text-secondary whitespace-pre-line">{item.description}</p>
               </div>
               <div className="flex items-center gap-1 ml-4">
                 <button
@@ -267,6 +267,7 @@ export default function AdminExperiencePage() {
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             rows={4}
+            helperText="One contribution per line — each line becomes a bullet on the public page."
           />
           <div className="flex justify-end gap-3 pt-4">
             <Button variant="ghost" type="button" onClick={closeModal}>

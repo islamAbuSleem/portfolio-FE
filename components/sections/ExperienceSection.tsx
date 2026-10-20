@@ -6,6 +6,38 @@ import { Experience } from "@/lib/api";
 import { formatPeriod } from "@/lib/utils";
 
 /**
+ * A role's description is a list of contributions, one per line in the
+ * database. A single-line description still renders as a paragraph, so the
+ * admin panel can keep working either way.
+ */
+function Description({ text }: { text: string }) {
+  const lines = text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  if (lines.length <= 1) {
+    return <p className="text-body-sm text-text-secondary measure">{text}</p>;
+  }
+
+  return (
+    <ul className="flex flex-col gap-2">
+      {lines.map((line) => (
+        <li key={line} className="flex gap-3">
+          <span
+            className="mt-[0.55em] h-px w-3 shrink-0 bg-primary/60"
+            aria-hidden="true"
+          />
+          <span className="text-body-sm text-text-secondary">
+            {line}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/**
  * Roles on a rail. Each node is a position in time; each card is the work
  * that happened there. The period is monospaced and tabular so a reader
  * scanning for "what did they do, and when" gets it in one pass.
@@ -58,9 +90,9 @@ export function ExperienceSection({ experiences }: { experiences: Experience[] }
                         <p className="mt-1 font-mono text-label-md text-secondary">
                           {experience.company}
                         </p>
-                        <p className="mt-3 text-body-sm text-text-secondary measure">
-                          {experience.description}
-                        </p>
+                        <div className="mt-3">
+                          <Description text={experience.description} />
+                        </div>
                       </div>
                     </div>
                   </article>
