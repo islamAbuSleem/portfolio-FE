@@ -26,15 +26,10 @@
  * broken "Live Demo" link.
  */
 export const PROJECT_LIVE_URLS = {
-  // The portfolio's own main link is its canonical origin.
-  portfolio: "https://portfolio-fe.islamabusleem.workers.dev",
-  productSearch: "",
-  jobPilot: "",
-  booking: "",
-  ecommerce: "",
-  school: "",
-  learnHub: "",
-  engineerDocs: "",
+  productSearch: "https://product-search.islamabusleem.workers.dev",
+  jobPilot: "https://job-pilot.islamabusleem.workers.dev",
+  booking: "https://booking.islamabusleem.workers.dev",
+  ecommerce: "https://ecommerce.islamabusleem.workers.dev",
 } as const;
 
 export interface PortfolioProject {
@@ -60,16 +55,28 @@ const GITHUB = "https://github.com/islamAbuSleem";
 
 export const staticProjects: PortfolioProject[] = [
   {
-    slug: "portfolio",
-    title: "Kinetic Syntax Portfolio",
+    slug: "ecommerce",
+    title: "E-Commerce Platform",
     description:
-      "A full-stack portfolio platform with an admin panel for managing profile content, skills, experience and projects. Server-rendered on Cloudflare Workers with a NestJS API on Render and PostgreSQL on Neon.",
-    techs: ["Next.js 16", "React 19", "TypeScript", "Tailwind CSS 4", "NestJS", "Prisma", "PostgreSQL", "Cloudflare Workers"],
-    imageUrl: "/projects/portfolio.svg",
-    liveUrl: PROJECT_LIVE_URLS.portfolio || undefined,
-    githubUrl: `${GITHUB}/portfolio-FE`,
+      "Marketplace: a curated storefront for independent studios, with escrow-protected payments, OAuth sign-in, seller dashboards and a Prisma-backed catalogue on PostgreSQL.",
+    techs: ["Next.js", "React", "NestJS", "Prisma", "PostgreSQL", "Passport", "Swagger"],
+    imageUrl: "/projects/ecommerce.png",
+    liveUrl: PROJECT_LIVE_URLS.ecommerce || undefined,
+    githubUrl: `${GITHUB}/Ecommerce`,
     featured: true,
     order: 0,
+  },
+  {
+    slug: "booking",
+    title: "Booking Platform",
+    description:
+      "The Gazette: a curated lodging platform with live availability, socket.io updates, Stripe payments and OAuth social login.",
+    techs: ["Nuxt", "Vue", "NestJS", "Prisma", "Neon", "Socket.io", "Stripe", "Passport"],
+    imageUrl: "/projects/booking.png",
+    liveUrl: PROJECT_LIVE_URLS.booking || undefined,
+    githubUrl: `${GITHUB}/Booking`,
+    featured: true,
+    order: 1,
   },
   {
     slug: "product-search",
@@ -77,11 +84,11 @@ export const staticProjects: PortfolioProject[] = [
     description:
       "A product intelligence platform that ingests catalogue data, mines it with AI agents and surfaces deals, merchant insights and product analytics.",
     techs: ["Next.js", "React", "TypeScript", "Sanity CMS", "AI SDK", "Clerk", "PostHog", "Tailwind CSS"],
-    imageUrl: "/projects/product-search.svg",
+    imageUrl: "/projects/product-search.png",
     liveUrl: PROJECT_LIVE_URLS.productSearch || undefined,
     githubUrl: `${GITHUB}/product-search`,
     featured: true,
-    order: 1,
+    order: 2,
   },
   {
     slug: "job-pilot",
@@ -89,70 +96,10 @@ export const staticProjects: PortfolioProject[] = [
     description:
       "An agentic job-search assistant that scrapes listings, matches them against a profile, and generates tailored CVs and application reports.",
     techs: ["Next.js", "React", "TypeScript", "OpenAI", "Browserbase Stagehand", "Recharts", "React-PDF", "Tailwind CSS"],
-    imageUrl: "/projects/job-pilot.svg",
+    imageUrl: "/projects/job-pilot.png",
     liveUrl: PROJECT_LIVE_URLS.jobPilot || undefined,
     githubUrl: `${GITHUB}/job-pilot`,
     featured: true,
-    order: 2,
-  },
-  {
-    slug: "booking",
-    title: "Booking Platform",
-    description:
-      "A real-time booking system with live availability, socket.io updates, Stripe payments and OAuth social login.",
-    techs: ["Nuxt", "Vue", "NestJS", "Prisma", "Neon", "Socket.io", "Stripe", "Passport"],
-    imageUrl: "/projects/booking.svg",
-    liveUrl: PROJECT_LIVE_URLS.booking || undefined,
-    githubUrl: `${GITHUB}/Booking`,
-    featured: false,
     order: 3,
-  },
-  {
-    slug: "ecommerce",
-    title: "E-Commerce Platform",
-    description:
-      "A full-stack storefront and admin dashboard for managing products, orders and customers, with OAuth sign-in and a Prisma-backed catalogue.",
-    techs: ["Next.js", "React", "NestJS", "Prisma", "PostgreSQL", "Passport", "Swagger"],
-    imageUrl: "/projects/ecommerce.svg",
-    liveUrl: PROJECT_LIVE_URLS.ecommerce || undefined,
-    githubUrl: `${GITHUB}/Ecommerce`,
-    featured: false,
-    order: 4,
-  },
-  {
-    slug: "school",
-    title: "School Management System",
-    description:
-      "A school platform with role-based dashboards, realtime messaging over STOMP, and reporting dashboards.",
-    techs: ["Vue 3", "Vuetify", "Vuex", "Spring Boot", "PostgreSQL", "Chart.js", "WebSocket"],
-    imageUrl: "/projects/school.svg",
-    liveUrl: PROJECT_LIVE_URLS.school || undefined,
-    githubUrl: `${GITHUB}/school`,
-    featured: false,
-    order: 5,
-  },
-  {
-    slug: "learn-hub",
-    title: "Learn Hub",
-    description:
-      "A personal knowledge hub of deep, ground-up notes organised by topic, built as a fast client-rendered Nuxt app.",
-    techs: ["Nuxt 4", "Vue", "TypeScript", "Cloudflare Workers"],
-    imageUrl: "/projects/learn-hub.svg",
-    liveUrl: PROJECT_LIVE_URLS.learnHub || undefined,
-    githubUrl: `${GITHUB}/islamAbuSleem`,
-    featured: false,
-    order: 6,
-  },
-  {
-    slug: "engineer-docs",
-    title: "Software Engineer Docs",
-    description:
-      "A guided, deep-dive knowledge base covering backend, frontend, databases, DevOps, system design and testing fundamentals.",
-    techs: ["Nuxt", "Nuxt Content", "Vue", "Markdown", "TypeScript"],
-    imageUrl: "/projects/engineer-docs.svg",
-    liveUrl: PROJECT_LIVE_URLS.engineerDocs || undefined,
-    githubUrl: `${GITHUB}/islamAbuSleem`,
-    featured: false,
-    order: 7,
   },
 ];
